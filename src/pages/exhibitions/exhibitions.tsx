@@ -1,9 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ExhibitionImg from '../../assets/images/exhibition.png'
+import ExhibitionArtComponents from '../../components/exhibitions_art_component'
 import SlideImage1 from '../../assets/images/sui.png'
 import SlideImage2 from '../../assets/images/ily.png'
 import SlideImage3 from '../../assets/images/under.png'
-import ExhibitionSlides from '../../components/exhibitions_home_slide'
+import Art1 from '../../assets/art/art1.png'
+import Art2 from '../../assets/art/art2.png'
+import Art3 from '../../assets/art/art3.png'
+import Art4 from '../../assets/art/art4.png'
+import Art5 from '../../assets/art/art5.png'
+import Art6 from '../../assets/art/art6.png'
+import Art7 from '../../assets/art/art7.png'
+import Art8 from '../../assets/art/art8.png'
+import Art9 from '../../assets/art/art9.png'
+import Art10 from '../../assets/art/art10.png'
+import Art11 from '../../assets/art/art11.png'
+import Art12 from '../../assets/art/art12.png'
+// import ExhibitionSlides from '../../components/exhibitions_home_slide'
+import ExhibitionArtSlides from '../../components/exhibition_slide'
 
 export default function Exhibitions() {
     const menuItems = [
@@ -42,11 +56,99 @@ export default function Exhibitions() {
         },
     ]
 
+    const art=[
+        {
+            id:0,
+            title:'ジャスミン',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art1
+        },
+        {
+            id:1,
+            title:'シンデレラ',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art2
+        },
+        {
+            id:2,
+            title:'アリエル',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art3
+        },
+        {
+            id:3,
+            title:'白雪姫',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art4
+        },
+        {
+            id:4,
+            title:'GOOFY',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art5
+        },
+        {
+            id:5,
+            title:'DAISY DUCK',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art6
+        },
+        {
+            id:6,
+            title:'DONALD DUCK',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art7
+        },
+        {
+            id:7,
+            title:'MINNIE MOUSE',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art8
+        },
+        {
+            id:8,
+            title:'忍野忍',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art9
+        },
+        {
+            id:9,
+            title:'遭遇',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art10
+        },
+        {
+            id:10,
+            title:'神原駿河',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art11
+        },
+        {
+            id:11,
+            title:'羽川翼',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art12
+        },
+        
+    ]
+
     const [selectedMenu, setSelectedMenu] = useState(0)
     const hasActiveMenu = selectedMenu !== null
     return (
         <div>
-            <div className='bg-[#080403] min-h-screen'>
+            <div className='bg-[#080403] min-h-screen relative'>
                 <div className='px-5'>
                     <div className='flex justify-around'>
                         <div className='px-10 relative w-full z-10'>
@@ -87,7 +189,11 @@ export default function Exhibitions() {
                     </div>
                 </div>
                 <div className='pt-20'>
-                    <ExhibitionSlides/>
+                    {/* <ExhibitionSlides/> */}
+                </div>
+                <div className='pt-20 mx-10'>
+                    {/* <ExhibitionSlides/> */}
+                    <ExhibitionArtSlides artSlides={art}/>
                 </div>
             </div>
         </div>
