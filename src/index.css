@@ -41,3 +41,18 @@ body {
 }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.bg-zoom {
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  transition: background-size 0.3s ease;
+}
+.bg-zoom:hover {
+  background-size: 105% auto;
+}
+@layer utilities {
+  .text-stroke {
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+  }
+}
