@@ -1,34 +1,29 @@
 import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/home/Home'
+import News from './pages/news/news_list'
+import NewsId from './pages/news/[newsId]'
+import Art from './pages/exhibitions/exhibitions'
+import ArtId from './pages/exhibitions/[exhibitionsid]'
+import Shop from './pages/shop/shop'
+import ShopId from './pages/shop/[shopid]'
 import './App.css'
-
+import ErrorBoundary from './components/ErrorBoundary';
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          {/* <img src={reactLogo} className="logo react" alt="React logo" /> */}
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p className="text-3xl font-bold underline">
-          Hello 
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <ErrorBoundary>
+      <Routes>
+        <Route path="/" element={<Home/>}/>
+        <Route path="/News" element={<News/>}/>
+        <Route path="/News/:id" element={<NewsId/>}/>
+        <Route path="/Art" element={<Art/>}/>
+        <Route path="/Art/:id" element={<ArtId/>}/>
+        <Route path="/Shop" element={<Shop/>}/>
+        <Route path="/Shop/:id" element={<ShopId/>}/>
+      </Routes>
+    </ErrorBoundary>
   )
 }
 

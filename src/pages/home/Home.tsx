@@ -20,10 +20,11 @@ import News_2 from '../../assets/images/homenews_2.png'
 import News_3 from '../../assets/images/homenews_3.png'
 import News_4 from '../../assets/images/homenews_4.png'
 import { Swiper as SwiperType } from 'swiper';
-
+import {Link} from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import SlideButton from '../../assets/icons/slide_button_40.png'
+import Header from '../header/header'
 
 // import 'swiper/swiper.min.css'
 // import 'swiper/modules/pagination/pagination.min.css'
@@ -166,11 +167,13 @@ export default function Home(){
     const shiftPercent = (50 / slidesToShow) * activeIndex;
     const containerWidth = `${(total / slidesToShow) * 100}%`;
     return (
-        <div className='min-h-screen bg-[#080403] relative h-full'>
+        <div id="top" className='min-h-screen bg-[#080403] relative h-full'>
+            <Header/>
             {/* Keyframes */}
             <style>
                 {`@keyframes progress { from { width: 0%; } to { width: 100%; } }`}
             </style>
+            <section id="home">
             <div className='bg-[#f7f7f7] min-h-screen relative h-full overflow-hidden'>
                 <div className='flex justify-between relative py-20'>
                     <div className='px-10 relative w-full'>
@@ -201,6 +204,8 @@ export default function Home(){
                     <div className='bg-[#00CEFB] py-4 px-2 text-[1.8rem] text-[#080403]  my-10 ml-10'>〈物語〉シリーズ × Mika Pikazo</div>
                 </div>
             </div>
+            </section>
+            <section id="news">
             <div className='min-h-screen relative h-full '>
                  <div className='relative px-20'>
                     <div className='text-[#f7f7f7] font-bold text-7xl rotate-90 origin-bottom-left absolute left-10px -top-20px z-20'>
@@ -286,6 +291,8 @@ export default function Home(){
                     </div>
                 </div>
             </div>
+            </section>
+            <section id="art">
             <div className='min-h-screen relative h-full'>
                   <div className='relative  px-20'>
                         <div className='text-[#f7f7f7] font-bold text-7xl rotate-90 origin-bottom-left absolute left-10px -top-20px z-20'>
@@ -342,6 +349,8 @@ export default function Home(){
                     </div>
                 </div>
             </div>
+            </section>
+            <section id="shop">
             <div className='relative min-h-screen bg-[#080403] relative h-full'>
                 <div className='relative  px-20'>
                         <div className='text-[#f7f7f7] font-bold text-7xl rotate-90 origin-bottom-left absolute left-10px -top-20px z-20'>
@@ -391,25 +400,29 @@ export default function Home(){
                    </div>
                 </div>
             </div>
-            <div className='relative bg-[#080403] relative min-h-screen h-full'>
-                <img src={MikaStroke} className='w-full h-full object-contain absolute left-0 top-0 inset-0 z-2'/>
-                <div className='py-10 px-10 relative z-10'>
-                    <div className='flex items-center'>
-                        <div className='w-full flex justify-center'>
-                            <img src={MikaAbout} className='object-contain w-[70%] h-full'/>
-                        </div>
-                        <div className='w-full'>
-                            <div className='flex justify-between w-full items-end'>
-                                <div className='text-[#FFDC22] text-[5rem] leading-none'>Mika Pikazo</div>
-                                <div className='text-[#FFDC22] text-[1.25rem] '>ミカ・ピカゾ</div>
+            </section>
+            <section id="about">
+                <div className='relative bg-[#080403] relative min-h-screen h-full'>
+                    <img src={MikaStroke} className='w-full h-full object-contain absolute left-0 top-0 inset-0 z-2'/>
+                    <div className='py-10 px-10 relative z-10'>
+                        <div className='flex items-center'>
+                            <div className='w-full flex justify-center'>
+                                <img src={MikaAbout} className='object-contain w-[70%] h-full'/>
                             </div>
-                            <div className='text-[#f7f7f7] text-[1.3rem] my-5 text-justify'>
-                                2017年に誕生したバーチャルYouTuber「輝夜月」(2019年8月現在チャンネル登録者数99万)のキャラクターデザインをはじめ、2018年8月に開催された世界初のVRライブ「輝夜月LIVE@Zepp VR」のアートディレクション、同年10月に展開された輝夜月のオリジナルアパレルブランド"Beyond The Moon"のロゴデザイン・グッズデザイン、VOCALOID「初音ミク」の総合的なライブ・展示イベントである「マジカルミライ2018」のメインビジュアル・衣装デザイン、KAGOME企画「ナポリたん」「ミート総帥」やドワンゴ×NEXCO中日本が手がけるネットラジオ番組企画「ガールズ ラジオ デイズ」のキャラクターデザイン、「Fate/GrandOrder」ゲーム内イラスト、人気ライトノベルの装画、CDジャケットなど、幅広いジャンル、数々の作品でアートワークを手がける。 
+                            <div className='w-full'>
+                                <div className='flex justify-between w-full items-end'>
+                                    <div className='text-[#FFDC22] text-[5rem] leading-none'>Mika Pikazo</div>
+                                    <div className='text-[#FFDC22] text-[1.25rem] '>ミカ・ピカゾ</div>
+                                </div>
+                                <div className='text-[#f7f7f7] text-[1.3rem] my-5 text-justify'>
+                                    2017年に誕生したバーチャルYouTuber「輝夜月」(2019年8月現在チャンネル登録者数99万)のキャラクターデザインをはじめ、2018年8月に開催された世界初のVRライブ「輝夜月LIVE@Zepp VR」のアートディレクション、同年10月に展開された輝夜月のオリジナルアパレルブランド"Beyond The Moon"のロゴデザイン・グッズデザイン、VOCALOID「初音ミク」の総合的なライブ・展示イベントである「マジカルミライ2018」のメインビジュアル・衣装デザイン、KAGOME企画「ナポリたん」「ミート総帥」やドワンゴ×NEXCO中日本が手がけるネットラジオ番組企画「ガールズ ラジオ デイズ」のキャラクターデザイン、「Fate/GrandOrder」ゲーム内イラスト、人気ライトノベルの装画、CDジャケットなど、幅広いジャンル、数々の作品でアートワークを手がける。 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
+       
         </div>
     )
 }
