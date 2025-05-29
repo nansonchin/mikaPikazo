@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState,useRef,useEffect}from 'react'
 import MikaAbout from '../../assets/images/mika_about.png'
 import Homemain from '../../assets/images/home_main_img.png'
 import NextIcon from '../../assets/icons/next_white_icon.png'
@@ -12,7 +12,79 @@ import product2 from '../../assets/images/product-2.png'
 import product3 from '../../assets/images/product-3.png'
 import Carousel from '../../components/shop_carousel';
 import Exhibtion_Wallpaper from '../../assets/images/exhibition_home.png'
+import Exart1 from '../../assets/images/ex_1.png'
+import Exart2 from '../../assets/images/ex_2.png'
+import Exart3 from '../../assets/images/ex_3.png'
+import News_1 from '../../assets/images/homenews_1.png'
+import News_2 from '../../assets/images/homenews_2.png'
+import News_3 from '../../assets/images/homenews_3.png'
+import News_4 from '../../assets/images/homenews_4.png'
+import { Swiper as SwiperType } from 'swiper';
+
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Navigation, Pagination } from 'swiper/modules'
+import SlideButton from '../../assets/icons/slide_button_40.png'
+
+// import 'swiper/swiper.min.css'
+// import 'swiper/modules/pagination/pagination.min.css'
+
 export default function Home(){
+    const homeNews=[
+        {
+            id :0,
+            image:News_1,
+            date:'21',
+            month:'3',
+            text:'星街すいせいさん 初の日本武道館公演 “SuperNova” キービジュアルを描かせていただきました。 特設サイト'
+        },
+        {
+            id :1,
+            image:News_2,
+            date:'21',
+            month:'3',
+            text:'3月21日(土)「Mika Pikazo展2020 全国 ツアー 福岡-」でのサイン会に関しまして'
+        },
+        {
+            id :2,
+            image:News_3,
+            date:'20',
+            month:'5',
+            text:'3月21日(土)「Mika Pikazo展2020 全国 ツアー 福岡-」でのサイン会に関しまして'
+        },
+        {
+            id :3,
+            image:News_4,
+            date:'27',
+            month:'4',
+            text:'3月27日(土)「Mika Pikazo展2020 全国 ツアー 福岡-」でのサイン会に関しまして'
+        },
+    ]
+    const swiperArt=[
+        {
+            id:0,
+            img:Exart1
+        },
+        {
+            id:1,
+            img:Exart2
+        },
+        {
+            id:2,
+            img:Exart3
+        },
+        {
+            id:4,
+            img:Exart1
+        },
+        {
+            id:5,
+            img:Exart2
+        },
+        {
+            id:6,
+            img:Exart3
+        },
+    ]
     const recommendProduct=[
         {
             images: [Slide1],
@@ -70,10 +142,35 @@ export default function Home(){
         },
     ]
 
+    const [activeIndex,setActiveIndex] = useState(0);
+    const swiperRef = useRef<SwiperType|null>(null);
+    const slidesToShow=3;
+    const timerRef = useRef<ReturnType<typeof setInterval>|null>(null)
+    const total=homeNews.length
     const [selectExhibition, isSelectExhibition] = useState(0);
 
+    const prev=()=> setActiveIndex((current)=>(current === 0? homeNews.length - 1: current-1))
+    const next=()=> setActiveIndex((current)=>(current === homeNews.length-1? 0:current+1 ))
+
+    useEffect(()=>{
+        if(timerRef.current){
+            clearInterval(timerRef.current);
+        }
+        timerRef.current = setInterval(next,5000)
+
+        return()=>{
+            if(timerRef.current) clearInterval(timerRef.current)
+        }
+    },[activeIndex])
+    
+    const shiftPercent = (50 / slidesToShow) * activeIndex;
+    const containerWidth = `${(total / slidesToShow) * 100}%`;
     return (
         <div className='min-h-screen bg-[#080403] relative h-full'>
+            {/* Keyframes */}
+            <style>
+                {`@keyframes progress { from { width: 0%; } to { width: 100%; } }`}
+            </style>
             <div className='bg-[#f7f7f7] min-h-screen relative h-full overflow-hidden'>
                 <div className='flex justify-between relative py-20'>
                     <div className='px-10 relative w-full'>
@@ -99,10 +196,95 @@ export default function Home(){
                         </div>
                     </div>
                 </div>
-                         <div className='absolute bottom-[1%] left-[20%] z-20 '>
-                            <div className='bg-[#00CEFB] py-4 px-2 text-[3.7rem] text-[#080403] w-[120%]'>〈物語〉シリーズ × Mika Pikazo</div>
-                            <div className='bg-[#00CEFB] py-4 px-2 text-[1.8rem] text-[#080403]  my-10 ml-10'>〈物語〉シリーズ × Mika Pikazo</div>
+                <div className='absolute bottom-[1%] left-[20%] z-20 '>
+                    <div className='bg-[#00CEFB] py-4 px-2 text-[3.7rem] text-[#080403] w-[120%]'>〈物語〉シリーズ × Mika Pikazo</div>
+                    <div className='bg-[#00CEFB] py-4 px-2 text-[1.8rem] text-[#080403]  my-10 ml-10'>〈物語〉シリーズ × Mika Pikazo</div>
+                </div>
+            </div>
+            <div className='min-h-screen relative h-full '>
+                 <div className='relative px-20'>
+                    <div className='text-[#f7f7f7] font-bold text-7xl rotate-90 origin-bottom-left absolute left-10px -top-20px z-20'>
+                        NEWS
+                    </div>
+                </div>
+                <div className='min-h-screen relative h-full'>
+                    <div className='absolute w-full h-full'>
+                        <img src={homeNews[activeIndex].image} className='object-cover h-full w-full'/>
+                        <div className='overlay'></div>
+                    </div>
+                    <div className='flex relative justify-between py-10 px-10 w-full h-full z-20'>
+                        <div className='w-full '></div>
+                        <div className='w-full'>
+                            <div className='flex'>
+                                 <div className='flex w-full min-h-[26rem] relative z-20 items-center text-center '>
+                                    <div className='bg-[#f7f7f7] p-5 w-3/12'>
+                                        <div className='text-[2rem] text-[#080403]'>
+                                            <span className='text-[3rem] text-[#080403] font-bold'>{homeNews[activeIndex].date}</span>日
+                                        </div>
+                                        <div className='text-[2rem] text-[#080403]'>{homeNews[activeIndex].month}月</div>
+                                    </div>
+                                    <div className='text-[#f7f7f7] text-left w-8/12 pl-2 text-[1.3rem]'>
+                                        {homeNews[activeIndex].text}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex justify-end">
+                                <div className='cursor-pointer group w-fit text-[#f7f7f7]'>
+                                    <img src={NextIcon} className='object-contain transfrom transition-transform group-hover:-translate-y-2' />
+                                    <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Next</div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <div className='w-full h-full relative'>
+                         <div className='flex transition-transform duration-500 ease-in-out relation'
+                                style={{
+                                            width: containerWidth,
+                                            transform: `translateX(-${shiftPercent}%)`
+                                            }}
+                            >
+                                {homeNews.map((data,index)=>{
+                                    const active = index === activeIndex
+                                    return(
+                                        <div key={data.id} className='relative cursor-pointer group px-2 ' 
+                                        onClick={() => setActiveIndex(index)}
+                                        >
+                                                <div className='relative'>
+                                                    <div className='w-full h-full'>
+                                                        <div className='group-hover:scale-105 overflow-hiddeen transform transform-transition duration-300'>
+                                                            <img src={data.image} className='object-cover w-full h-full '/>
+                                                            <div className={`absolute inset-0 ${active? '':'background-overlay-black'} w-full h-full`}/>
+                                                        </div>
+                                                        <div className='p-2 absolute bottom-1'>
+                                                            <div className='text-[#f7f7f7]'>{data.text} {index} :active {activeIndex}</div>
+                                                        </div>
+                                                        {
+                                                            index === activeIndex &&(
+                                                                <div className='absolute bottom-0 h-2'
+                                                                style={{ width: '0%', animation: 'progress 5s linear forwards' }}
+                                                                ></div>
+                                                            )
+                                                        }
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    )
+                                })}
+                            </div>
+                            <div className='absolute top-1/2 left-0 transform -translate-y-1/2'>
+                                <div className=''>
+                                    <img src={SlideButton} className='object-contain cursor-pointer' onClick={prev}/>
+                                </div>
+                            </div>
+                            <div className='absolute top-1/2 right-0 transform -translate-y-1/2'>
+                                <div className=''>
+                                    <img src={SlideButton} className='object-contain cursor-pointer rotate-180' onClick={next}/>
+                                </div>
+                            </div>
+                            
+                    </div>
+                </div>
             </div>
             <div className='min-h-screen relative h-full'>
                   <div className='relative  px-20'>
@@ -114,7 +296,7 @@ export default function Home(){
                     <div>
                         <img src={Exhibtion_Wallpaper} className='object-contain w-full h-full'/>
                     </div>
-                    <div className=''>
+                    <div className='relative'>
                         {
                             ExhibitionText.map((data,index)=>(
                                 <div 
@@ -132,6 +314,31 @@ export default function Home(){
                                 </div> 
                             ))
                             }
+                            <div>
+                                <div className='max-w-6xl mx-auto p-4 absolute -left-[5rem] bottom-0 '>
+                                    <Swiper 
+                                    modules={[Navigation,Pagination,Autoplay]}
+                                    spaceBetween={20}
+                                    navigation
+                                    pagination={{clickable:true}}
+                                    autoplay={{delay:3000,disableOnInteraction:false}}
+                                    breakpoints={{
+                                        640:{slidesPerView:1},
+                                        768:{slidesPerView:2},
+                                        1024:{slidesPerView:3},
+                                    }}
+                                    className='h-80 sm:h-96 overflow-hidden'
+                                    >
+                                        {
+                                            swiperArt.map((src,idx)=>(
+                                                <SwiperSlide key={idx} className='cursor-pointer hover:scale-105 transform transform-transition duration-300 overflow-hidden'>
+                                                    <img src={src.img} className='h-full w-full object-cover shadow-lg'/>
+                                                </SwiperSlide>
+                                            ))
+                                        }
+                                    </Swiper>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>

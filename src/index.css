@@ -2,7 +2,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import 'swiper/css';
+@import "swiper/css/pagination";
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -55,4 +56,20 @@ body {
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: black;
   }
+}
+
+.overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  /* a white → black radial‐gradient, but the white stop is fully transparent */
+  background: radial-gradient(
+    circle at -40% -60%,
+    rgba(8, 4, 3, 0)   30%,
+    rgba(8,   4,   3,   1) 100%
+  );
+}
+
+.background-overlay-black{
+  background-color: rgba(8, 4, 3, 0.6);
 }
