@@ -1,5 +1,6 @@
 import React,{ StrictMode, } from 'react';
 import Porduct from '../assets/images/product-1.png'
+import { Link } from 'react-router-dom';
 
 interface ShopProps {
   images: string[];
@@ -17,7 +18,8 @@ export default function Shop_components({
     return(
         <div className='z-40 relative md:max-w-xs lg:max-w-sm'>
             <div className='flex flex-col'>
-                <div className='border-2 relative'>
+                <Link to={`/Shop/${title}`}>
+                <div className='border-2 relative cursor-pointer'>
                     <div className='relative overflow-hidden'>
                         {images.map((src,i)=>(
                             <img key={i} src={src} alt={`${title} ${i}`}
@@ -39,7 +41,7 @@ export default function Shop_components({
                         </div>
                     </div>
                 </div>
-
+                </Link>
             </div>
         </div>
     );

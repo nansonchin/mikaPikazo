@@ -16,8 +16,8 @@ import Art9 from '../../assets/art/art9.png'
 import Art10 from '../../assets/art/art10.png'
 import Art11 from '../../assets/art/art11.png'
 import Art12 from '../../assets/art/art12.png'
-// import ExhibitionSlides from '../../components/exhibitions_home_slide'
 import ExhibitionArtSlides from '../../components/exhibition_slide'
+import ExhibitionSlides from '../../components/exhibitions_home_slide';
 
 export default function Exhibitions() {
     const menuItems = [
@@ -144,6 +144,32 @@ export default function Exhibitions() {
         
     ]
 
+    const manga=[
+        {
+            id:0,
+            title:'ジャスミン',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art1
+        },
+        {
+            id:1,
+            title:'シンデレラ',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art2
+        },
+        {
+            id:2,
+            title:'アリエル',
+            date:'26.9.2023',
+            views:'23,690',
+            image:Art3
+        },
+
+        
+    ]
+
     const [selectedMenu, setSelectedMenu] = useState(0)
     const hasActiveMenu = selectedMenu !== null
     return (
@@ -189,11 +215,27 @@ export default function Exhibitions() {
                     </div>
                 </div>
                 <div className='pt-20'>
-                    {/* <ExhibitionSlides/> */}
+                    {
+                        selectedMenu === 0 &&(
+                            <ExhibitionSlides/> 
+                        )
+                    }
+                   
                 </div>
-                <div className='pt-20 mx-10'>
-                    {/* <ExhibitionSlides/> */}
-                    <ExhibitionArtSlides artSlides={art}/>
+                <div className='pt-20'>
+                    {
+                        selectedMenu === 1 &&(
+                            <ExhibitionArtSlides artSlides={art}/>
+                        )
+                    }
+                </div>
+                <div className='pt-20'>
+                    {
+                        selectedMenu === 2 &&(
+                            <ExhibitionArtSlides artSlides={manga}/>
+                        )
+                    }
+                   
                 </div>
             </div>
         </div>

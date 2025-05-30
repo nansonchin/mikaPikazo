@@ -8,6 +8,7 @@ import SlideImage3 from '../assets/images/under.png'
 import SlideImage1B from '../assets/images/sui_b.png'
 import SlideImage2B from '../assets/images/illy_b.png'
 import SlideImage3B from '../assets/images/under_b.png'
+import { Link } from 'react-router-dom'
 export default function ExhibitionSlides() {
     const images = [
         {
@@ -50,16 +51,18 @@ export default function ExhibitionSlides() {
         <div>
             <div className="flex">
                 <div className='flex-1 w-full p-15 bg-[#FFDC22]'>
-                    <div className='font-bold text-8xl text-[#f7f7f7]'>星街すいせい</div>
+                    <div className='font-bold text-8xl text-[#f7f7f7]'>{images[currentPage].name}</div>
                     <div className=' text-xl text-[#080403] py-5'>星街すいせいさんの3rdアルバム『新星目録』ジャケットイラストを描かせていただきました！プレスリリース</div>
                     <div className='pt-25 flex justify-end'>
                         <img src={viewIcon} className='object-contain' />
                         <div className='text-lg text-[#080403] pl-2'>23,690</div>
                     </div>
-                    <div className='flex items-end justify-end pt-30   '>
+                    <div className='flex items-end justify-end pt-30'>
                         <div className='group relative cursor-pointer'>
+                            <Link to={`${currentPage}`}>
                             <img src={circle_Arrow} className='object-contain mt-5 transform transition-transform group-hover:-translate-y-2' />
-                            <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100'>Details</div>
+                            <div className='text-[#080403] text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100'>Details</div>
+                            </Link>
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,7 @@ import NewBg1 from '../../assets/images/news_1.jpg'
 import NewBg2 from '../../assets/images/news_2.jpg'
 import NewBg3 from '../../assets/images/news_3.jpg'
 import New_backIcon from '../../assets/icons/new_back.png'
+import { Link } from 'react-router-dom';
 export default function NewList(){
     const NewsData=[
         {
@@ -95,6 +96,7 @@ useEffect(()=>{
                     <div className='pl-[5.5rem] w-[60%] h-full relative z-30'>
                         {
                             NewsData.map((data,index)=>(
+                                <Link to={`${data.id}`}>
                                 <div
                                 onClick={()=>setActive(index)}
                                     className="relative cursor-pointer bg-zoom my-5"
@@ -137,6 +139,7 @@ useEffect(()=>{
                                         )}
                                     
                                 </div>
+                                </Link>
                             ))
                         }
                     </div>

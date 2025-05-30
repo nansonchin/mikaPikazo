@@ -96,31 +96,31 @@ export default function Home(){
         {
             images: [Slide2],
             category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A',
+            title: '「Mika Pikazo展」 クリアファイルセット Type-AB',
             price: '¥  2,000(税込)',
         },
         {
             images: [Slide3],
             category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A',
+            title: '「Mika Pikazo展」 クリアファイルセット Type-ABBB',
             price: '¥  2,000(税込)',
         },
         {
             images: [product1],
             category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A',
+            title: '「Mika Pikazo展」 クリアファイルセット Type-A123',
             price: '¥  2,000(税込)',
         },
         {
             images: [product2],
             category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A',
+            title: '「Mika Pikazo展」 クリアファイルセット Type-AB',
             price: '¥  2,000(税込)',
         },
         {
             images: [product3],
             category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A',
+            title: '「Mika Pikazo展」 クリアファイルセット Type-Z',
             price: '¥  2,000(税込)',
         },
     ]
@@ -234,10 +234,13 @@ export default function Home(){
                                 </div>
                             </div>
                             <div className="flex justify-end">
-                                <div className='cursor-pointer group w-fit text-[#f7f7f7]'>
-                                    <img src={NextIcon} className='object-contain transfrom transition-transform group-hover:-translate-y-2' />
-                                    <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Next</div>
-                                </div>
+                                <Link to={'/news/id'}>
+                                    <div className='cursor-pointer group w-fit text-[#f7f7f7]'>
+                                        <img src={NextIcon} className='object-contain transfrom transition-transform group-hover:-translate-y-2' />
+                                        <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Next</div>
+                                    </div>
+                                </Link>
+                                
                             </div>
                         </div>
                     </div>
@@ -300,27 +303,38 @@ export default function Home(){
                         </div>
                     </div>
                 <div className='flex py-10 px-10 gap-5'>
-                    <div>
+                    <div className='w-full'>
                         <img src={Exhibtion_Wallpaper} className='object-contain w-full h-full'/>
                     </div>
-                    <div className='relative'>
-                        {
-                            ExhibitionText.map((data,index)=>(
-                                <div 
-                                onClick={()=>isSelectExhibition(index)}
-                                className='text-[#f7f7f7] cursor-pointer transition transition-transform duration-300 hover:text-[#FFDC22] py-5' key={data.id}>
-                                    <div className='flex items-center gap-5'>
-                                        <div className='w-[2.9rem] h-[0.5rem] bg-[#FFDC22]'/>
-                                        <div className={`${selectExhibition === index ? 'font-bold' : 'font-normal'} text-[2.5rem]`}>
-                                        {data.name}
-                                        </div>
+                    <div className='relative w-full'>
+                            <div className='flex justify-between w-full items-center'>
+                                <div className='w-full'>
+                                {
+                                    ExhibitionText.map((data,index)=>(
+                                        <div 
+                                        onClick={()=>isSelectExhibition(index)}
+                                        className='text-[#f7f7f7] cursor-pointer transition transition-transform duration-300 hover:text-[#FFDC22] py-5' key={data.id}>
+                                            <div className='flex items-center gap-5'>
+                                                <div className='w-[2.9rem] h-[0.5rem] bg-[#FFDC22]'/>
+                                                <div className={`${selectExhibition === index ? 'font-bold' : 'font-normal'} text-[2.5rem]`}>
+                                                {data.name}
+                                                </div>
+                                            </div>
+                                        { selectExhibition === index && (
+                                            <div className='text-[1.3rem] pl-20'>{data.sub}</div>
+                                        )}
+                                        </div> 
+                                    ))
+                                    }
+                                </div>
+                             
+                                 <Link to={'/art'} >
+                                    <div className='cursor-pointer group w-fit text-[#f7f7f7]'>
+                                        <img src={NextIcon} className='object-contain transfrom transition-transform group-hover:-translate-y-2' />
+                                        <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Next</div>
                                     </div>
-                                { selectExhibition === index && (
-                                    <div className='text-[1.3rem] pl-20'>{data.sub}</div>
-                                )}
-                                </div> 
-                            ))
-                            }
+                                </Link>
+                            </div>
                             <div>
                                 <div className='max-w-6xl mx-auto p-4 absolute -left-[5rem] bottom-0 '>
                                     <Swiper 
@@ -338,9 +352,12 @@ export default function Home(){
                                     >
                                         {
                                             swiperArt.map((src,idx)=>(
-                                                <SwiperSlide key={idx} className='cursor-pointer hover:scale-105 transform transform-transition duration-300 overflow-hidden'>
-                                                    <img src={src.img} className='h-full w-full object-cover shadow-lg'/>
-                                                </SwiperSlide>
+                                                
+                                                    <SwiperSlide key={idx} className='cursor-pointer hover:scale-105 transform transform-transition duration-300 overflow-hidden'>
+                                                        <Link to={`/Art/${src.id}`} >
+                                                            <img src={src.img} className='h-full w-full object-cover shadow-lg'/>
+                                                        </Link>
+                                                    </SwiperSlide>
                                             ))
                                         }
                                     </Swiper>
@@ -390,8 +407,10 @@ export default function Home(){
                                     </div>
                                     <div className="text-[#F7F7F7] w-full flex flex-col justify-center items-center">
                                         <div className='cursor-pointer group w-fit'>
+                                            <Link to={`/Shop`} >
                                             <img src={NextIcon} className='object-contain mt-5 transfrom transition-transform group-hover:-translate-y-2' />
-                                            <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Go</div>
+                                            <div className='text-[#f7f7f7] text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Go</div>
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>

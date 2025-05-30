@@ -7,6 +7,7 @@ import News_FaceIcon from '../../assets/icons/news_face.png'
 import News_InstaIcon from '../../assets/icons/news_insta.png'
 import News_XIcon from '../../assets/icons/news_x.png'
 import NextIcon from '../../assets/icons/next_white_icon.png'
+import { Link } from 'react-router-dom'
 
 export default function NewsDetail(){
         const Socialicon=[
@@ -152,6 +153,8 @@ export default function NewsDetail(){
 
                                                 }}
                                             >
+                                            <Link to={`/News/${data.id}`}>
+
                                                 <div className='inset-0 z-10 absolute top-0 w-full h-full' 
                                                 style={{
                                                     backgroundImage: `
@@ -176,6 +179,7 @@ export default function NewsDetail(){
                                                     </div>
                                                     <div className='h-[6px] absolute bottom-0 z-12 bg-[#F40404] overflow-hidden group-hover:w-full'>
                                                     </div>
+                                            </Link>
                                             </div>
                                         ))
                                     }

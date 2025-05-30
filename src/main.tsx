@@ -6,8 +6,6 @@ import App from './App'
 // import Home from './pages/home/Home.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Router>
       <App/>
-    </Router>
   </StrictMode>,
 )

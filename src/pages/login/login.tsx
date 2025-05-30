@@ -5,11 +5,38 @@ import passwordClose from '../../assets/icons/password_close.png';
 import circle_Arrow from '../../assets/icons/circle_arrow.png';
 import google from '../../assets/icons/twitterX.png';
 import twitterX from '../../assets/icons/google.png';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
     const [showPwd, setShowPwd] = useState(false)
     const [errUser, setErrUser] = useState(false)
     const [errPass, setErrPass] = useState(false)
+
+    const [username,setUsername] = useState('')
+    const [password,setPassword] = useState('')
+
+    const navigate = useNavigate()
+
+    const loginMethod = ()=>{
+        let ok = true;
+        if(!username){
+            setErrUser(true)
+            ok=false;
+        }else{
+            setErrUser(false)
+        }
+
+        if(!password){
+            setErrPass(true)
+            ok=false;
+        } else{
+            setErrPass(false)
+        }
+
+        if(ok){
+            navigate('/')
+        }
+    }
     return (
         <div>
             <div className='flex h-screen overflow-hidden relative'>
@@ -23,21 +50,23 @@ export default function Login() {
                         <div className=" w-full py-5 flex flex-col">
                             <label className='text-lg text-[#91b233]'>ユーザー名</label>
                             <label className='text-lg text-[#F40404]'>{errUser? '※エラー！ユーザー名が見つかりません':null}</label>
-                            <input type='text' className='w-ful border-b-2 border-b-solid font-bold' />
+                            <input value={username} onChange={e=>setUsername(e.target.value)} type='text' className='w-ful border-b-2 border-b-solid font-bold' />
                         </div>
                         <div className=" w-full py-5 flex flex-col relative">
                             <label className='text-lg text-[#91b233]'>パスワード</label>
                             <label className='text-lg text-[#F40404]'>{errPass? '※エラー！パスワードが間違っています':null}</label>
-                            <input type={showPwd ? 'text' : 'password'} className='w-full border-b-2 border-b-solid font-bold' />
+                            <input value={password} onChange={e=>{setPassword(e.target.value)}} type={showPwd ? 'text' : 'password'} className='w-full border-b-2 border-b-solid font-bold' />
                             <span className="">
                                 <img src={showPwd ? passwordOpen : passwordClose} alt="toggle" className='object-contain absolute right-8 bottom-8 cursor-pointer' onClick={() => setShowPwd(!showPwd)} />
                             </span>
                         </div>
                         <div className='cursor-pointer'>
+                            <Link to={`/Forgotpassword`}>
                             Forgot Password ?
+                            </Link>
                         </div>
                         <div className='flex items-end justify-end '>
-                            <div className='group relative cursor-pointer'>
+                            <div className='group relative cursor-pointer' onClick={loginMethod}>
                                 <img src={circle_Arrow} className='object-contain mt-5 transform transition-transform group-hover:-translate-y-2' />
                                 <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100'>Login</div>
                             </div>
@@ -50,7 +79,9 @@ export default function Login() {
                             <img src={twitterX} className='object-contain bg-white' />
                         </div>
                         <div className="mt-20 cursor-pointer underline flex items-center justify-center">
+                            <Link to={'/Register'}>
                             REGISTER
+                            </Link>
                         </div>
                     </div>
                     <div className='flex-1'>

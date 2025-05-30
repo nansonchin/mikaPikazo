@@ -9,6 +9,7 @@ import art6 from '../../assets/images/art6.png'
 import art7 from '../../assets/images/art7.png'
 import art8 from '../../assets/images/art8.png'
 import exihibitionArt from '../../assets/images/art_exhibitions.png'
+import { Link } from 'react-router-dom';
 export default function ExhibitionDetail(){
     const [activeIndex,setActiveIndex]=useState(0);
     const itemRefs=useRef<Array<HTMLImageElement|null>>([]);
@@ -49,15 +50,19 @@ export default function ExhibitionDetail(){
     },[])
     const testImage=[
         {
+            id:0,
             img:art5,
         },
         {
+            id:1,
             img:art6,
         },
         {
+            id:2,
             img:art7,
         },
         {
+            id:3,
             img:art8,
         },
     ]
@@ -131,12 +136,12 @@ export default function ExhibitionDetail(){
                                         </div>
                                         <div className='max-h-[50%] overflow-y-scroll hide-scrollbar'>
                                             <div className='text-xl text-[#080403] pt-5'>
-                                                表参道原宿の交差点にある 東急プラザのエントランスを飾らせていただきました。
+                                                表参道原宿の交差点にある東急プラザのエントランスを飾らせていただきました。
                                             </div>
                                             <div className='pt-10'>
                                                 Mika Pikazo個展「#ILYGIRL」<br></br>
                                                 7/28-8/30 11:00〜20:00<br></br>
-                                                キュープラザ原宿 入場無料
+                                                キュープラザ原宿入場無料
                                             </div>
                                         </div>
                                         <div className='flex justify-start items-start gap-10 py-20'>
@@ -168,9 +173,11 @@ export default function ExhibitionDetail(){
                                             <div className='grid grid-cols-2 gap-2 '>
                                                 {
                                                     testImage.map((image)=>(
-                                                            <div className=''>
+                                                        <div className=''>
+                                                            <Link to={`/Art/${image.id}`}>
                                                                 <img src={image.img} className='w-full h-full object-cover cursor-pointer hover:scale-105 transition transition-transform duration-300'/>
-                                                            </div>
+                                                            </Link>
+                                                        </div>
                                                     )
                                                     )
                                                 }

@@ -11,18 +11,22 @@ export default function Header(){
         {
             id:0,
             icon:header_cart,
+            nav:'/Cart'
         },
         {
             id:1,
             icon:header_ship,
+            nav:'/Shipping'
         },
         {
             id:2,
             icon:header_contact,
+            nav:'/Contact'
         },
         {
             id:3,
             icon:header_profile,
+            nav:'/Login'
         }
     ]
     return(
@@ -30,7 +34,7 @@ export default function Header(){
             <div className='px-10 py-4'>
                 <div className='flex justify-between items-center'>
                     <div className='w-3/12'>
-                    <Link to="#/top">
+                    <Link to="#top">
                         <img src={header_logo} className='object-contain w-auto h-auto'/>
                     </Link>
                     </div>
@@ -47,7 +51,9 @@ export default function Header(){
                         <div className='flex justify-evenly'>
                             {
                             headerIcon.map((icon)=>(
+                                <Link to={`${icon.nav}`}>
                                     <img src={icon.icon} className='object-contain w-auto h-auto cursor-pointer'/>
+                                </Link>
                                 ))
                             }
                         </div>

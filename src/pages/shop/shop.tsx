@@ -18,14 +18,14 @@ export default function Shop() {
             id: 2,
             images: [Product_Image_2],
             category: 'グッズ',
-            title: '「Mika Pikazo展」クリアファイルセット Type-A',
+            title: '「Mika Pikazo展」クリアファイルセット Type-AA',
             price: '¥2,000(税込)',
         },
         {
             id: 3,
             images: [Product_Image_3],
             category: 'グッズ',
-            title: '「Mika Pikazo展」クリアファイルセット Type-B',
+            title: '「Mika Pikazo展」クリアファイルセット Type-BB',
             price: '¥2,000(税込)',
         },
     ];
