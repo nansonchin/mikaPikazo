@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import NewBg1 from '../../assets/images/news_1.jpg'
 import NewBg2 from '../../assets/images/news_2.jpg'
 import NewBg3 from '../../assets/images/news_3.jpg'
@@ -7,9 +7,91 @@ import News_FaceIcon from '../../assets/icons/news_face.png'
 import News_InstaIcon from '../../assets/icons/news_insta.png'
 import News_XIcon from '../../assets/icons/news_x.png'
 import NextIcon from '../../assets/icons/next_white_icon.png'
-import { Link } from 'react-router-dom'
+import { Link,useNavigate,useParams } from 'react-router-dom'
 
+interface NewsItem{
+    id:number,
+    title:string,
+    date:string,
+    month:string,
+    description:string,
+    facebook:string,
+    instagram:string,
+    twitterx:string,
+    image_url:string,
+}
 export default function NewsDetail(){
+    const {id}=useParams<{id:string}>();
+    const [loading,setLoading]=useState(true);
+    const [error,setError]=useState<string|null>(null);
+    const [item,setItem] = useState<NewsItem|null>(null);
+    const [latestInformation,setLatestInformation]=useState<NewsItem[]>([]);
+    const navigate = useNavigate()
+
+    useEffect(()=>{
+        const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+        fetch(`${API_URL}/api/news`).then((res)=>res.json()).then((newsData:NewsItem[])=>{
+            const currentId=Number(id);
+            const filtered = newsData.filter(item=>item.id !=currentId);
+            setLatestInformation(filtered)
+        }).catch(error=>{
+            console.log(error)
+        })
+    },[id])
+
+    const handleNextNews=()=>{
+        if(!item|| latestInformation.length===0) return;
+        const allNews=[...latestInformation,item].sort((a,b)=> a.id - b.id);
+        const currentIndex = allNews.findIndex((news)=>news.id===item.id)
+
+        const nextIndex = (currentIndex+1)% allNews.length;
+        const nextId = allNews[nextIndex].id
+
+        navigate(`/News/${nextId}`);
+    }
+    useEffect(()=>{
+        if(!id) return;
+        const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+        fetch(`${API_URL}/api/news/${id}`).then((res)=>{
+            if(!res.ok){
+                throw new Error(`Front End : Failed to get the api from Back End => (status ${res.status})`) 
+            }
+            return res.json();
+        }).then((data:NewsItem)=>{
+            setItem(data)
+        }).catch(error=>{
+            console.log(error)
+            setError('Front End : Encounter an error during fetching News Detail data')
+        }).finally(()=>{
+            setLoading(false);
+        })
+
+    },[id])
+     if (loading) {
+            return (
+            <div className="min-h-screen flex items-center justify-center bg-[#080403]">
+                <p className="text-white">Loading…</p>
+            </div>
+            );
+        }
+        if (error) {
+            return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#080403] text-white">
+                <p>{error}</p>
+                <Link to="/" className="mt-4 text-cyan-500 hover:underline">
+                ← Back to Home
+                </Link>
+            </div>
+            );
+        }
+        if (!item) {
+            return (
+            <div className="min-h-screen flex items-center justify-center bg-[#080403] text-white">
+                <p>News item not found.</p>
+            </div>
+            );
+        }
+
         const Socialicon=[
             {
                 id:0,
@@ -24,29 +106,7 @@ export default function NewsDetail(){
                 icon:News_XIcon,
             },
         ]
-        const latest=[
-        {
-            id:0,
-            news:'3月21日(土)「Mika Pikazo展2020 全国 ツアー 福岡-」でのサイン会に関しまして',
-            date:'21',
-            month:'3',
-            news_img:NewBg1,
-        },
-        {
-            id:1,
-            news:'3月21日(土)「Mika Pikazo展2020 全国 ツアー 福岡-」でのサイン会に関しまして',
-            date:'21',
-            month:'3',
-            news_img:NewBg2,
-        },
-        {
-            id:2,
-            news:'3月27日(土)「Mika Pikazo展2020 全国ツアー -広島-」でのサイン会に関しまして',
-            date:'27',
-            month:'3',
-            news_img:NewBg3,
-        },
-    ]
+   
     return(
         <div>
             <div className='min-h-screen bg-[#080403] relative h-full'>
@@ -55,7 +115,7 @@ export default function NewsDetail(){
                     className="min-h-[43rem] bg-no-repeat bg-center bg-cover bg-[0px_-30rem] relative"
                     style={{
                     backgroundImage: `
-                        url(${NewBg1})
+                        url(${item.image_url})
                     `,
                     backgroundPosition: '0px -30rem',
 
@@ -98,35 +158,29 @@ export default function NewsDetail(){
                         <div className='p-4 w-[70%] min-h-[26rem] relative z-20 items-center '>
                             <div className='bg-[#f7f7f7] p-8 w-fit text-center'>
                                 <div className='text-[2rem] text-[#080403]'>
-                                    <span className='text-[3rem] text-[#080403] font-bold'>21</span>日
+                                    <span className='text-[3rem] text-[#080403] font-bold'>{item.date}</span>日
                                 </div>
-                                <div className='text-[2rem] text-[#080403]'>3月</div>
+                                <div className='text-[2rem] text-[#080403]'>{item.month}月</div>
                             </div>
                             <div className='font-bold mt-5 mb-10 text-[1.3rem] text-[#f7f7f7]'>
-                                3月27日(土)「Mika Pikazo展2020 全国ツアー -広島-」でのサイン会に関しまして
+                                {item.title}
                             </div>
                             <div className='text-[#f7f7f7] text-[1.3rem] my-5'>
-                                今般の新型コロナウイルス感染拡大に際し、現時点において  <br></br>
-                                終息の見通しがたっていない事を鑑みウイルスの感染予防・拡散防止を考慮し <br></br>
-                                「Mika Pikazo展2020 全国ツアー -広島-」でのサイン会を中止することと致しました。<br></br>
-                            </div>
-                            <div className='text-[#f7f7f7] text-[1.3rem] my-5'>
-                                「Mika Pikazo展2020 全国ツアー -広島-」 でのイラスト展示、グッズ販売は期間内実施いたします。 <br></br>
-                                皆さまに多大なるご迷惑をおかけいたしますことを、深くお詫び申し上げます。
+                               {item.description}
                             </div>
                             <div className='flex justify-between'>
                                 <div className='flex mt-20 gap-5'>
                                     {
                                         Socialicon.map((data)=>(
                                             <div className='cursor-pointer '>
-                                                <img src={data.icon} className='object-contain'/>
+                                                <img src={data.icon} className='object-contain' />
                                             </div>
                                         ))
                                     }
                                 </div>
                                 <div>
                                     <div className="pt-10 text-[#F7F7F7] px-30">
-                                        <div className='cursor-pointer group w-fit'>
+                                        <div className='cursor-pointer group w-fit' onClick={handleNextNews}>
                                             <img src={NextIcon} className='object-contain mt-5 transfrom transition-transform group-hover:-translate-y-2' />
                                             <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Next</div>
                                         </div>
@@ -141,13 +195,13 @@ export default function NewsDetail(){
                             <div>
                                 <div className=' w-full h-full relative z-30'>
                                     {
-                                        latest.map((data,index)=>(
+                                        latestInformation.map((data,index)=>(
                                             <div
                                                 className="relative cursor-pointer bg-zoom my-5 group"
                                                 style={{
                                                 backgroundImage: `
                                                     /* 1) the semi-transparent overlay */
-                                                    url(${data.news_img})
+                                                    url(${data.image_url})
                                                 `,
                                                 backgroundPosition: 'center',
 
@@ -175,7 +229,7 @@ export default function NewsDetail(){
                                                             </div>
                                                             <div className='text-[1.5rem] text-[#080403]'>{data.month}月</div>
                                                         </div>
-                                                        <div className='text-[#f7f7f7] text-[1rem] absolute bottom-[1.5rem] text-left'>{data.news}</div>
+                                                        <div className='text-[#f7f7f7] text-[1rem] absolute bottom-[1.5rem] text-left'>{data.title}</div>
                                                     </div>
                                                     <div className='h-[6px] absolute bottom-0 z-12 bg-[#F40404] overflow-hidden group-hover:w-full'>
                                                     </div>

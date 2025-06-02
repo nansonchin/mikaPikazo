@@ -29,37 +29,34 @@ import Header from '../header/header'
 // import 'swiper/swiper.min.css'
 // import 'swiper/modules/pagination/pagination.min.css'
 
+interface NewsItem{
+    id:number;
+    title:string;
+    date:string;
+    month:string;
+    description:string;
+    facebook:string;
+    instagram:string;
+    twitterx:string;
+    image_url:string;
+}
+
 export default function Home(){
-    const homeNews=[
-        {
-            id :0,
-            image:News_1,
-            date:'21',
-            month:'3',
-            text:'星街すいせいさん 初の日本武道館公演 “SuperNova” キービジュアルを描かせていただきました。 特設サイト'
-        },
-        {
-            id :1,
-            image:News_2,
-            date:'21',
-            month:'3',
-            text:'3月21日(土)「Mika Pikazo展2020 全国 ツアー 福岡-」でのサイン会に関しまして'
-        },
-        {
-            id :2,
-            image:News_3,
-            date:'20',
-            month:'5',
-            text:'3月21日(土)「Mika Pikazo展2020 全国 ツアー 福岡-」でのサイン会に関しまして'
-        },
-        {
-            id :3,
-            image:News_4,
-            date:'27',
-            month:'4',
-            text:'3月27日(土)「Mika Pikazo展2020 全国 ツアー 福岡-」でのサイン会に関しまして'
-        },
-    ]
+    const [homeNews,setHomeNews]=useState<NewsItem[]>([])
+    useEffect(()=>{
+        const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+
+        Promise.all([
+            fetch(`${API_URL}/api/news`).then(res=>res.json())
+        ]).then(
+            ([newsData])=>{
+                setHomeNews(newsData)
+            }
+        ).catch(err=>{
+            console.error(`Error Front End Using Api ${err}`)
+        })
+    },[])
+   
     const swiperArt=[
         {
             id:0,
@@ -154,18 +151,28 @@ export default function Home(){
     const next=()=> setActiveIndex((current)=>(current === homeNews.length-1? 0:current+1 ))
 
     useEffect(()=>{
+        if(homeNews.length==0){
+            return;
+        }
         if(timerRef.current){
             clearInterval(timerRef.current);
         }
-        timerRef.current = setInterval(next,5000)
+        timerRef.current = setInterval(next,3000)
 
         return()=>{
             if(timerRef.current) clearInterval(timerRef.current)
         }
-    },[activeIndex])
+    },[homeNews,activeIndex])
     
     const shiftPercent = (50 / slidesToShow) * activeIndex;
     const containerWidth = `${(total / slidesToShow) * 100}%`;
+    if (homeNews.length === 0) {
+        return (
+        <div className="min-h-screen flex items-center justify-center bg-[#080403]">
+            <p className="text-white">Loading news…</p>
+        </div>
+        );
+    }
     return (
         <div id="top" className='min-h-screen bg-[#080403] relative h-full'>
             <Header/>
@@ -214,7 +221,7 @@ export default function Home(){
                 </div>
                 <div className='min-h-screen relative h-full'>
                     <div className='absolute w-full h-full'>
-                        <img src={homeNews[activeIndex].image} className='object-cover h-full w-full'/>
+                        <img src={homeNews[activeIndex].image_url} className='object-cover object-top h-full w-full'/>
                         <div className='overlay'></div>
                     </div>
                     <div className='flex relative justify-between py-10 px-10 w-full h-full z-20'>
@@ -229,15 +236,15 @@ export default function Home(){
                                         <div className='text-[2rem] text-[#080403]'>{homeNews[activeIndex].month}月</div>
                                     </div>
                                     <div className='text-[#f7f7f7] text-left w-8/12 pl-2 text-[1.3rem]'>
-                                        {homeNews[activeIndex].text}
+                                        {homeNews[activeIndex].title}
                                     </div>
                                 </div>
                             </div>
                             <div className="flex justify-end">
-                                <Link to={'/news/id'}>
+                                <Link to={`/news/${homeNews[activeIndex].id}`}>
                                     <div className='cursor-pointer group w-fit text-[#f7f7f7]'>
                                         <img src={NextIcon} className='object-contain transfrom transition-transform group-hover:-translate-y-2' />
-                                        <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Next</div>
+                                        <div className='text-center transform translate-x-full opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-hover:translate-x-0'>Detail</div>
                                     </div>
                                 </Link>
                                 
@@ -259,17 +266,17 @@ export default function Home(){
                                         >
                                                 <div className='relative'>
                                                     <div className='w-full h-full'>
-                                                        <div className='group-hover:scale-105 overflow-hiddeen transform transform-transition duration-300'>
-                                                            <img src={data.image} className='object-cover w-full h-full '/>
+                                                        <div className="w-[40rem] h-[25rem] overflow-hidden group-hover:scale-105 transform transition duration-300 relative">
+                                                            <img src={data.image_url} className="object-cover w-full h-full object-top"/>
                                                             <div className={`absolute inset-0 ${active? '':'background-overlay-black'} w-full h-full`}/>
                                                         </div>
                                                         <div className='p-2 absolute bottom-1'>
-                                                            <div className='text-[#f7f7f7]'>{data.text} {index} :active {activeIndex}</div>
+                                                            <div className='text-[#f7f7f7]'>{data.title} {index} </div>
                                                         </div>
                                                         {
                                                             index === activeIndex &&(
-                                                                <div className='absolute bottom-0 h-2'
-                                                                style={{ width: '0%', animation: 'progress 5s linear forwards' }}
+                                                                <div className='absolute bottom-0 h-2 bg-[#F40404] border-1 border-[#f7f7f7]'
+                                                                style={{ width: '0%', animation: 'progress 3s linear forwards' }}
                                                                 ></div>
                                                             )
                                                         }
@@ -434,7 +441,7 @@ export default function Home(){
                                     <div className='text-[#FFDC22] text-[1.25rem] '>ミカ・ピカゾ</div>
                                 </div>
                                 <div className='text-[#f7f7f7] text-[1.3rem] my-5 text-justify'>
-                                    2017年に誕生したバーチャルYouTuber「輝夜月」(2019年8月現在チャンネル登録者数99万)のキャラクターデザインをはじめ、2018年8月に開催された世界初のVRライブ「輝夜月LIVE@Zepp VR」のアートディレクション、同年10月に展開された輝夜月のオリジナルアパレルブランド"Beyond The Moon"のロゴデザイン・グッズデザイン、VOCALOID「初音ミク」の総合的なライブ・展示イベントである「マジカルミライ2018」のメインビジュアル・衣装デザイン、KAGOME企画「ナポリたん」「ミート総帥」やドワンゴ×NEXCO中日本が手がけるネットラジオ番組企画「ガールズ ラジオ デイズ」のキャラクターデザイン、「Fate/GrandOrder」ゲーム内イラスト、人気ライトノベルの装画、CDジャケットなど、幅広いジャンル、数々の作品でアートワークを手がける。 
+                                    2017年に誕生したバーチャルYouTuber「輝夜月」(2019年8月現在チャンネル登録者数99万)のキャラクターデザインをはじめ、2018年8月に開催された世界初のVRライブ「輝夜月LIVE@Zepp VR」のアートディレクション、同年10月に展開された輝夜月のオリジナルアパレルブランド"Beyond The Moon"のロゴデザイン・グッズデザイン、VOCALOID「初音ミク」の総合的なライブ・展示イベントである「マジカルミライ2018」のメインビジュアル・衣装デザイン、KAGOME企画「ナポリたん」「ミート総帥」やドワンゴ×NEXCO中日本が手がけるネットラジオ番組企画「ガールズ ラジオ デイズ」のキャラクターデザイン、「Fate/GrandOrder」ゲーム内イラスト、人気ライトノベルの装画、CDジャケットなど、幅広いジャンル、数々の作品でアートワークを手がける。
                                 </div>
                             </div>
                         </div>
