@@ -4,20 +4,25 @@ import SlideButton from '../assets/icons/slide_button_40.png'
 import artDropdown from '../assets/icons/art_dropdown.png'
 import searchIcon from '../assets/icons/search_icon_24.png'
 
-interface Art{
-    image:string;
+interface ExhibitionDetail{
+    id:number;
     title:string;
-    date:string;
-    views:string
+    description:string;
+    smile:number;
+    love:number;
+    view:number;
+    date:Date;
+    image_details:string[];
+    category:string;
 }
 
 interface ArtSlideProps{
-    artSlides:Art[];
+    artSlides:ExhibitionDetail[];
 }
 
 export default function ArtSlides({artSlides}:ArtSlideProps){
     const itemsPerPage=8;
-    const pages:Art[][]=[];
+    const pages:ExhibitionDetail[][]=[];
 
      const filter = [
         {
@@ -154,10 +159,11 @@ export default function ArtSlides({artSlides}:ArtSlideProps){
                                 {page.map((items,i)=>(
                                     <div key={pageIdx} className=''>
                                         <ExhibitionArtComponents
-                                            image={items.image}
+                                            id={items.id}
+                                            image={items.image_details}
                                             title={items.title}
                                             date={items.date}
-                                            views={items.views}
+                                            views={items.view}
                                         />
                                     </div>
                                 ))}

@@ -19,7 +19,22 @@ import Art12 from '../../assets/art/art12.png'
 import ExhibitionArtSlides from '../../components/exhibition_slide'
 import ExhibitionSlides from '../../components/exhibitions_home_slide';
 
+interface ExhibitionDetail{
+  id:number;
+    title:string;
+    description:string;
+    smile:number;
+    love:number;
+    view:number;
+    date:Date;
+    image_details:string[];
+    category:string;
+}
 export default function Exhibitions() {
+    const [errorState,setErrorState]=useState(null)
+    const [loading,setLoading]=useState(false);
+    const [exhibitionData,setExhibitionData]=useState<ExhibitionDetail[]>([])
+
     const menuItems = [
         {
             id: 0, menu: 'HOME',
@@ -172,6 +187,22 @@ export default function Exhibitions() {
 
     const [selectedMenu, setSelectedMenu] = useState(0)
     const hasActiveMenu = selectedMenu !== null
+
+    useEffect(()=>{
+        try{
+            const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000'
+           fetch(`${API_URL}/api/exhibition`).then(res=>{
+            if(!res.ok){
+                throw new Error(`status ${res.status}`)
+            }
+                return res.json()
+           }).then(data=>{
+            setExhibitionData(data)
+           })
+        }catch(err){
+            console.log(err);
+        }
+    },[])
     return (
         <div>
             <div className='bg-[#080403] min-h-screen relative'>
@@ -217,7 +248,8 @@ export default function Exhibitions() {
                 <div className='pt-20'>
                     {
                         selectedMenu === 0 &&(
-                            <ExhibitionSlides/> 
+                            // <></>
+                            <ExhibitionSlides product={exhibitionData.filter(data=>data.category==='feature')}/> 
                         )
                     }
                    
@@ -225,16 +257,16 @@ export default function Exhibitions() {
                 <div className='pt-20'>
                     {
                         selectedMenu === 1 &&(
-                            <ExhibitionArtSlides artSlides={art}/>
+                            <ExhibitionArtSlides artSlides={exhibitionData.filter(data=>data.category ==='illustration')}/>
                         )
                     }
                 </div>
                 <div className='pt-20'>
-                    {
+                    {/* {
                         selectedMenu === 2 &&(
                             <ExhibitionArtSlides artSlides={manga}/>
                         )
-                    }
+                    } */}
                    
                 </div>
             </div>

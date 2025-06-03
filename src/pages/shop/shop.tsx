@@ -1,34 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import shopBackground from '../../assets/images/shop_bg.png';
 import dropDownIcon from '../../assets/icons/drop_down_icon.png';
 import Shop_components from '../../components/shop_components';
 import Product_Image_1 from '../../assets/images/product-1.png';
 import Product_Image_2 from '../../assets/images/product-2.png';
 import Product_Image_3 from '../../assets/images/product-3.png';
+
+interface ShopItem{
+    id:number;
+    image_url:string[];
+    category:string;
+    title:string;
+    price:string;
+    description:string;
+    content:string;
+    information:string;
+}
+
 export default function Shop() {
-    const shop_card=[
-        {
-            id: 1,
-            images: [Product_Image_1],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」マルシェバッグ',
-            price: '¥2,000(税込)',
-        },
-        {
-            id: 2,
-            images: [Product_Image_2],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」クリアファイルセット Type-AA',
-            price: '¥2,000(税込)',
-        },
-        {
-            id: 3,
-            images: [Product_Image_3],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」クリアファイルセット Type-BB',
-            price: '¥2,000(税込)',
-        },
-    ];
+
     const filter = [
         {
             id: 'newest', label: '発売日: 新しい順',
@@ -92,6 +82,19 @@ export default function Shop() {
     const [selectedMisc, setSelectedMisc] = useState<string | null>(null);
     const hasActiveMisc = selectedMisc !== null
     const [isMiscOpen, setIsMiscOpen] = useState(false);
+
+    const [shopItem,setShopItem]=useState<ShopItem[]>([])
+
+    useEffect(()=>{
+        try{
+            const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000'
+            fetch(`${API_URL}/api/shop`).then(
+                res=>res.json()
+            ).then((data)=>setShopItem(data))
+        }catch(err){
+            console.log(err);
+        }
+    },[])
     return (
         <div>
             <div className="w-screen relative overflow-x-hidden">
@@ -109,7 +112,7 @@ export default function Shop() {
                         </div>
                     </div>
                 </div>
-                <div className='bg-[#080403] h-screen w-full min-h-screen '>
+                <div className='bg-[#080403] h-full w-full min-h-screen '>
                     <div className="flex px-10 py-10 ">
                         <div className='flex-1'>
                             <div className="">
@@ -249,9 +252,9 @@ export default function Shop() {
                         </div>
                         <div className="flex-4 ">
                             <div className='px-20 -mt-40 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"'>
-                                    {shop_card.map(p=>(
+                                    {shopItem.map(p=>(
                                     <div className="">
-                                        <Shop_components key={p.id} images={p.images} category={p.category} title={p.title} price={p.price}/>
+                                        <Shop_components key={p.id} id={p.id} image_url={p.image_url} category={p.category} title={p.title} price={p.price} description={p.description} content={p.content} information={p.information}/>
                                     </div>
                                 ))}
                             </div>

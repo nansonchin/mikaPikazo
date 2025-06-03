@@ -41,16 +41,57 @@ interface NewsItem{
     image_url:string;
 }
 
+interface AboutData{
+    id:number;
+    about_description:string;
+    name_en:string;
+    name_jp:string;
+}
+
+interface ShopData{
+    id:number;
+    image_url:string[];
+    category:string;
+    title:string;
+    price:string;
+    description:string;
+    content:string;
+    information:string;
+
+}
+
+interface ExhibitionData{
+    id:number;
+    title:string;
+    description:string;
+    smile:number;
+    love:number;
+    view:number;
+    date:Date;
+    image_details:string[];
+    category:string;
+}
+
 export default function Home(){
     const [homeNews,setHomeNews]=useState<NewsItem[]>([])
+    const [aboutData,setAboutData] = useState<AboutData>();
+    const [shopData,setShopData]=useState<ShopData[]>([]);
+    const [exhibitionData, setExhibitionData]= useState<ExhibitionData[]>([]);
+
     useEffect(()=>{
         const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
 
         Promise.all([
-            fetch(`${API_URL}/api/news`).then(res=>res.json())
+            fetch(`${API_URL}/api/news`).then(res=>res.json()),
+            fetch(`${API_URL}/api/about`).then(res=>res.json()),
+            fetch(`${API_URL}/api/shop`).then(res=>res.json()),
+            fetch(`${API_URL}/api/exhibition`).then(res=>res.json()),
         ]).then(
-            ([newsData])=>{
+            ([newsData,aboutsData,shopData,exhibitionDatas])=>{
                 setHomeNews(newsData)
+                setAboutData(aboutsData[0])
+                setShopData(shopData),
+                setExhibitionData(exhibitionDatas)
             }
         ).catch(err=>{
             console.error(`Error Front End Using Api ${err}`)
@@ -358,11 +399,11 @@ export default function Home(){
                                     className='h-80 sm:h-96 overflow-hidden'
                                     >
                                         {
-                                            swiperArt.map((src,idx)=>(
+                                            exhibitionData.slice(0,6).map((src,idx)=>(
                                                 
                                                     <SwiperSlide key={idx} className='cursor-pointer hover:scale-105 transform transform-transition duration-300 overflow-hidden'>
                                                         <Link to={`/Art/${src.id}`} >
-                                                            <img src={src.img} className='h-full w-full object-cover shadow-lg'/>
+                                                            <img src={src.image_details[0]} className='h-full w-full object-cover shadow-lg'/>
                                                         </Link>
                                                     </SwiperSlide>
                                             ))
@@ -401,7 +442,7 @@ export default function Home(){
                             <div className='w-[60%] -mt-[20%]'>
                                  <div className='h-screen py-20 flex justify-center flex-col items-center relative'>
                                     <div className='flex justify-center'>
-                                        <Carousel products={recommendProduct}/> 
+                                        <Carousel products={shopData}/> 
                                     </div>
                                 </div>
                                 <div className='flex pb-20'>
@@ -437,11 +478,11 @@ export default function Home(){
                             </div>
                             <div className='w-full'>
                                 <div className='flex justify-between w-full items-end'>
-                                    <div className='text-[#FFDC22] text-[5rem] leading-none'>Mika Pikazo</div>
-                                    <div className='text-[#FFDC22] text-[1.25rem] '>ミカ・ピカゾ</div>
+                                    <div className='text-[#FFDC22] text-[5rem] leading-none'>{aboutData?.name_en}</div>
+                                    <div className='text-[#FFDC22] text-[1.25rem] '>{aboutData?.name_jp}</div>
                                 </div>
                                 <div className='text-[#f7f7f7] text-[1.3rem] my-5 text-justify'>
-                                    2017年に誕生したバーチャルYouTuber「輝夜月」(2019年8月現在チャンネル登録者数99万)のキャラクターデザインをはじめ、2018年8月に開催された世界初のVRライブ「輝夜月LIVE@Zepp VR」のアートディレクション、同年10月に展開された輝夜月のオリジナルアパレルブランド"Beyond The Moon"のロゴデザイン・グッズデザイン、VOCALOID「初音ミク」の総合的なライブ・展示イベントである「マジカルミライ2018」のメインビジュアル・衣装デザイン、KAGOME企画「ナポリたん」「ミート総帥」やドワンゴ×NEXCO中日本が手がけるネットラジオ番組企画「ガールズ ラジオ デイズ」のキャラクターデザイン、「Fate/GrandOrder」ゲーム内イラスト、人気ライトノベルの装画、CDジャケットなど、幅広いジャンル、数々の作品でアートワークを手がける。
+                                    {aboutData?.about_description}
                                 </div>
                             </div>
                         </div>

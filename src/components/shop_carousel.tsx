@@ -3,10 +3,14 @@ import Shop_components from './shop_components';
 import SlideButton from '../assets/icons/slide_button_40.png'
 
 interface Product {
-    images: string[];
+    id:number
+    image_url: string[];
     category: string;
     title: string;
     price: string;
+    description:string;
+    content:string;
+    information:string;
 }
 
 interface CarouselProps {
@@ -50,10 +54,15 @@ export default function Carousel({ products }: CarouselProps) {
                                     page.map((product, i) => (
                                         <div key={pageIdx} className='w-1/3'>
                                             <Shop_components
-                                                images={product.images}
+                                                id={product.id}
+                                                image_url={product.image_url}
                                                 category={product.category}
                                                 title={product.title}
                                                 price={product.price}
+                                                description={product.description}
+                                                content={product.content}
+                                                information={product.information}
+
                                             />
                                         </div>
                                     ))

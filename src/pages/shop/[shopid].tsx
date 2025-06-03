@@ -15,51 +15,67 @@ import InstagramIcon from '../../assets/icons/insta.png'
 import XIcon from '../../assets/icons/x.png'
 import LineIcon from '../../assets/icons/line.png'
 import Carousel from '../../components/shop_carousel';
-export default function ShopDetail() {
-    const slideImages = [
-        Slide1,
-        Slide2,
-        Slide3,
-    ]
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
-    const recommendProduct=[
-        {
-            images: [Slide1],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [Slide2],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [Slide3],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-AYY',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [product1],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-AXX',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [product2],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-AZZ',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [product3],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-ABB',
-            price: '¥  2,000(税込)',
-        },
-    ]
+interface ShopItem{
+    id:number;
+    image_url:string[];
+    title:string;
+    category:string;
+    price:string;
+    description:string;
+    content:string;
+    information:string;
+}
+
+export default function ShopDetail() {
+    const {id} = useParams<{id:string}>();
+    const [loading,setLoading] = useState(true)
+    const [error,setError] = useState<string|null>(null)
+    const [shopItem,setShopItem]=useState<ShopItem|null>(null);
+    const [recommend,setRecommend]=useState<ShopItem[]>([])
+
+    const navigate = useNavigate()
+
+    
+    const [currentSlide, setCurrentSlide] = useState(0);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    const reset = ()=>{
+        setLoading(true)
+        setError(null)
+        setShopItem(null)
+        setRecommend([])
+        setCurrentSlide(0)
+        
+    }
+    useEffect(()=>{
+        const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+        fetch(`${API_URL}/api/shop/${id}`).then((res)=>{
+            if(!res.ok){
+                throw new Error(`Front End : Failed to get the api from Back End => (status ${res.status})`) 
+            }
+            return res.json();
+        }).then((data:ShopItem)=>{
+            setShopItem(data)
+        }).catch(error=>{
+            console.log(error)
+            setError('Front End : Encounter an error during fetching Shop Detail data')
+        }).finally(()=>{
+            setLoading(false);
+        })
+    },[id])
+
+    useEffect(()=>{
+        const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+        fetch(`${API_URL}/api/shop`).then((res)=>res.json()).then((shopData:ShopItem[])=>{
+            const currentId=Number(id);
+            const filtered = shopData.filter(item => item.id != currentId)
+            setRecommend(filtered);
+        }).catch(error=>{
+            console.log(error)
+        })
+    })
 
     const socialIcon=[
         {icon: FacebookIcon,link:'',},
@@ -67,10 +83,6 @@ export default function ShopDetail() {
         {icon: XIcon,link:'',},
         {icon: LineIcon,link:'',},
     ]
-
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const length = slideImages.length;
-    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const prevSlide = () => {
         setCurrentSlide(currentSlide === 0 ? length - 1 : currentSlide - 1);
@@ -80,11 +92,12 @@ export default function ShopDetail() {
         setCurrentSlide(currentSlide === length - 1 ? 0 : currentSlide + 1)
     };
 
-    if (!Array.isArray(slideImages) || length <= 0) {
-        return null;
-    }
 
     useEffect(() => {
+            
+        if (!shopItem || !Array.isArray(shopItem.image_url) || shopItem.image_url.length === 0) {
+            return;
+        }
         if (timerRef.current) {
             clearInterval(timerRef.current);
         }
@@ -97,6 +110,33 @@ export default function ShopDetail() {
             }
         };
     }, [currentSlide])
+
+    if (loading) {
+        return (
+        <div className="min-h-screen flex items-center justify-center bg-[#080403]">
+            <p className="text-white">Loading…</p>
+        </div>
+        );
+    }
+    if (error) {
+        return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[#080403] text-white">
+            <p>{error}</p>
+            <Link to="/" className="mt-4 text-cyan-500 hover:underline">
+            ← Back to Home
+            </Link>
+        </div>
+        );
+    }
+    if (!shopItem) {
+        return (
+        <div className="min-h-screen flex items-center justify-center bg-[#080403] text-white">
+            <p>Shop item not found.</p>
+        </div>
+        );
+    }
+    const length = shopItem.image_url.length;
+
 
     return (
         <div className=''>
@@ -116,7 +156,7 @@ export default function ShopDetail() {
                                 <div className='flex-1 relative w-full max-w-2xl mx-auto overflow-hidden'>
                                     <div className='flex transition-transform duration-500' style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
                                         {/* <img src={Slide1} className='object-cover'/> */}
-                                        {slideImages.map((src, index) => (
+                                        {shopItem.image_url.map((src, index) => (
                                             <div key={index} className="w-full flex-shrink-0">
                                                 <img src={src} className='w-full h-auto object-cover' />
                                             </div>
@@ -129,7 +169,7 @@ export default function ShopDetail() {
                                         <img src={SlideButton} className='absolute bottom-20 object-contain cursor-pointer right-0' onClick={nextSlide} />
                                     </div>
                                     <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-2'>
-                                        {slideImages.map((_, idx) => (
+                                        {shopItem.image_url.map((_, idx) => (
                                             <div key={idx} className='relative cursor-pointer' onClick={() => setCurrentSlide(idx)}>
                                                 {idx === currentSlide ? (
                                                     <div className="w-10 h-2 bg-gray-700 rounded full overflow-hidden">
@@ -146,17 +186,17 @@ export default function ShopDetail() {
                                 </div>
                                 <div className='flex-2 flex flex-col justify-between items-stretch'>
                                     <div className='items-start'>
-                                        <div className='font-bold text-4xl text-[#F7F7F7]'>「Mika Pikazo展」 クリアファイルセット Type-A</div>
+                                        <div className='font-bold text-4xl text-[#F7F7F7]'>{shopItem.title}</div>
                                         <div className=' text-2xl text-[#F7F7F7] pt-5'>Mika Pikazo</div>
                                         <div className='flex justify-between pt-5'>
                                             <div>
                                                 <div className='text-[#F7F7F7] text-sm bg-[#080403] p-3 w-fit border-1 border-[#f7f7f7]'>
-                                                    グッズ {currentSlide}
+                                                    {shopItem.category}
                                                 </div>
                                             </div>
                                             <div>
                                                 <div className='font-bold text-[#F7F7F7] text-2xl '>
-                                                    ¥  2,000(税込)
+                                                    ¥  {shopItem.price}(税込)
                                                 </div>
                                             </div>
                                         </div>
@@ -179,8 +219,7 @@ export default function ShopDetail() {
                                     </div>
                                     <div className='h-1 w-50 bg-[#FFDC22] mt-3'></div>
                                     <div className='p-5 text-[#f7f7f7]'>
-                                        [スペック]<br></br>
-                                        A4 三枚入り
+                                        {shopItem.description}
                                     </div>
                                 </div>
                             </div>
@@ -191,8 +230,7 @@ export default function ShopDetail() {
                                     </div>
                                     <div className='h-1 w-50 bg-[#FFDC22] mt-3'></div>
                                     <div className='p-5 text-[#f7f7f7]'>
-                                        {/* [スペック]<br></br>
-                                        A4 三枚入り */}
+                                         {shopItem.content}
                                     </div>
                                 </div>
                             </div>
@@ -203,8 +241,7 @@ export default function ShopDetail() {
                                     </div>
                                     <div className='h-1 w-50 bg-[#FFDC22] mt-3'></div>
                                     <div className='p-5 text-[#f7f7f7]'>
-                                        ※色やサイズ等、実際の商品と若干異なる場合がございます。予めご了承下さい。<br></br>
-                                        ※商品のお届けまでに1～2週間ほど、お時間を要する場合がございます。
+                                      {shopItem.information}
                                     </div>
                                 </div>
                             </div>
@@ -232,7 +269,7 @@ export default function ShopDetail() {
                             RECOMMEND
                         </div>
                         <div className='flex-4 '>
-                            <Carousel products={recommendProduct}/>
+                            <Carousel products={recommend}/>
                         </div>
                     </div>
                 </div>

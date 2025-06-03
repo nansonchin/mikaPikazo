@@ -9,10 +9,85 @@ import art6 from '../../assets/images/art6.png'
 import art7 from '../../assets/images/art7.png'
 import art8 from '../../assets/images/art8.png'
 import exihibitionArt from '../../assets/images/art_exhibitions.png'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+
+interface ExhibitionDetail{
+    id:number;
+    title:string;
+    description:string;
+    smile:number;
+    love:number;
+    view:number;
+    date:Date;
+    image_details:string[];
+    category:string;
+}
+
 export default function ExhibitionDetail(){
+    const {id} = useParams<{id:string}>();
     const [activeIndex,setActiveIndex]=useState(0);
     const itemRefs=useRef<Array<HTMLImageElement|null>>([]);
+    const [getExhibitionData,setGetExhibitionData]= useState<ExhibitionDetail>();
+    const [error,setError]=useState<string |null>(null);
+    const [loading,setLoading]=useState(true);
+    const [getRandom,setGetRandom]=useState<ExhibitionDetail[]>([]);
+    const [cutFourData,setCutFourData]=useState<ExhibitionDetail[]>([]);
+        const testImage=[
+        {
+            id:0,
+            img:art5,
+        },
+        {
+            id:1,
+            img:art6,
+        },
+        {
+            id:2,
+            img:art7,
+        },
+        {
+            id:3,
+            img:art8,
+        },
+    ]
+
+    useEffect(()=>{
+        const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+        fetch(`${API_URL}/api/exhibition`).then(
+            (res)=>{
+                if(!res.ok){
+                    throw new Error(`Front End : Failed to get the api from Back End => (status ${res.status})`) 
+                }
+                return res.json()
+            }
+        ).then((data)=>{
+            const filter=data.filter((f:ExhibitionDetail)=>f.id.toString() !== id)
+            const shuffled =[...filter].sort(()=>Math.random()-0.5);
+            const random=shuffled.slice(0,4)
+             setCutFourData(random)
+            setGetRandom(data);
+        })
+    },[id])
+    
+
+    useEffect(()=>{
+        const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+        fetch(`${API_URL}/api/exhibition/${id}`).then(
+            (res)=>{
+                if(!res.ok){
+                    throw new Error(`Front End : Failed to get the api from Back End => (status ${res.status})`) 
+                }
+                return res.json()
+            }
+        ).then((data)=>{
+            setGetExhibitionData(data)
+        }).catch(err=>{
+            console.log(err)
+        }).finally(()=>{
+            setLoading(false)
+        })
+
+    },[id])
 
     useEffect(()=>{
         const node = itemRefs.current[activeIndex]
@@ -48,35 +123,31 @@ export default function ExhibitionDetail(){
             })
         }
     },[])
-    const testImage=[
-        {
-            id:0,
-            img:art5,
-        },
-        {
-            id:1,
-            img:art6,
-        },
-        {
-            id:2,
-            img:art7,
-        },
-        {
-            id:3,
-            img:art8,
-        },
-    ]
 
-    const artExhibition=[
-        {
-            id:'1',
-            art:exihibitionArt
-        },
-        {
-            id:'2',
-            art:exihibitionArt
-        },
-    ]
+    if (loading) {
+            return (
+            <div className="min-h-screen flex items-center justify-center bg-[#080403]">
+                <p className="text-white">Loading…</p>
+            </div>
+            );
+        }
+        if (error) {
+            return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#080403] text-white">
+                <p>{error}</p>
+                <Link to="/" className="mt-4 text-cyan-500 hover:underline">
+                ← Back to Home
+                </Link>
+            </div>
+            );
+        }
+        if (!getExhibitionData) {
+            return (
+            <div className="min-h-screen flex items-center justify-center bg-[#080403] text-white">
+                <p>Shop item not found.</p>
+            </div>
+            );
+        }
     return(
         <div>
             <div className='min-h-screen bg-[#080403] relative h-full'>
@@ -92,9 +163,9 @@ export default function ExhibitionDetail(){
                             </div>
                             {/* //indicator */}
                             <div className='mt-12'>
-                            {artExhibition.map((item,idx)=>(
+                            {getExhibitionData.image_details.map((item,idx)=>(
                                 <div 
-                                key={item.id}
+                                key={id}
                                 onClick={() => setActiveIndex(idx)}
                                 className={`h-3 w-3 transition transition-transform duration-300
                                  rounded-full hover:bg-[#FFDC22] my-5 cursor-pointer ${activeIndex===idx? 'bg-[#FFDC22] h-8':'bg-[#f7f7f7]'}` }>
@@ -112,11 +183,11 @@ export default function ExhibitionDetail(){
                     <div className='w-6/12 h-full bg-[#080403]'>
                         <div className='space-y-4 p-6'>
                             {
-                                artExhibition.map((art,idx)=>(
+                                getExhibitionData.image_details.map((art,idx)=>(
                                     <img 
-                                    key={art.id}
+                                    key={getExhibitionData.id}
                                     ref={el => {itemRefs.current[idx] = el}} 
-                                    src={art.art} className='object-cover max-w-full w-full'/>
+                                    src={art} className='object-cover max-w-full w-full'/>
 
                                 ))
                             }
@@ -132,34 +203,32 @@ export default function ExhibitionDetail(){
                                         <div className="absolute -bottom-5 -right-5 w-20 h-2 bg-yellow-400"></div>
                                         <div className="absolute -bottom-5 -right-5 w-2 h-20 bg-yellow-400"></div>
                                         <div className='font-bold text-6xl text-[#080403] tracking-widest'>
-                                        ILY GATE
+                                        {getExhibitionData?.title}
                                         </div>
                                         <div className='max-h-[50%] overflow-y-scroll hide-scrollbar'>
                                             <div className='text-xl text-[#080403] pt-5'>
-                                                表参道原宿の交差点にある東急プラザのエントランスを飾らせていただきました。
+                                              {/* {description} */}
                                             </div>
                                             <div className='pt-10'>
-                                                Mika Pikazo個展「#ILYGIRL」<br></br>
-                                                7/28-8/30 11:00〜20:00<br></br>
-                                                キュープラザ原宿入場無料
+                                                {getExhibitionData?.description}
                                             </div>
                                         </div>
                                         <div className='flex justify-start items-start gap-10 py-20'>
                                             <div className='flex'>
                                                 <img src={smileIcon} className='object-contain'/>
-                                                <div className='pl-2'>19,735</div>
+                                                <div className='pl-2'>{getExhibitionData?.smile}</div>
                                             </div>
                                             <div className='flex'>
                                                 <img src={loveIcon} className='object-contain'/>
-                                                <div className='pl-2'>19,735</div>
+                                                <div className='pl-2'>{getExhibitionData?.love}</div>
                                             </div>
                                             <div className='flex'>
                                                 <img src={viewIcon} className='object-contain'/>
-                                                <div className='pl-2'>19,735</div>
+                                                <div className='pl-2'>{getExhibitionData?.view}</div>
                                             </div>
                                         </div>
                                         <div className="text-base text-[#080403] text-end">
-                                            August 23, 2023 11:00 PM
+                                            {getExhibitionData?.date.toString()}
                                         </div>
                                     </div>
                                     <div className='relative flex my-10 items-center'>
@@ -171,11 +240,11 @@ export default function ExhibitionDetail(){
                                     <div className='relative'>
                                         <div className='absolute w-full'>
                                             <div className='grid grid-cols-2 gap-2 '>
-                                                {
-                                                    testImage.map((image)=>(
-                                                        <div className=''>
-                                                            <Link to={`/Art/${image.id}`}>
-                                                                <img src={image.img} className='w-full h-full object-cover cursor-pointer hover:scale-105 transition transition-transform duration-300'/>
+                                                {   
+                                                    cutFourData.map((data)=>(
+                                                        <div className='w-[100%] h-[20rem] border-2'>
+                                                            <Link to={`/Art/${data.id}`}>
+                                                                <img src={data.image_details[0]} className='w-full h-full object-cover object-top cursor-pointer hover:scale-105 transition transition-transform duration-300'/>
                                                             </Link>
                                                         </div>
                                                     )
