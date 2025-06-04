@@ -6,18 +6,23 @@ import circle_Arrow from '../../assets/icons/circle_arrow.png';
 import google from '../../assets/icons/twitterX.png';
 import twitterX from '../../assets/icons/google.png';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from'axios';
+import {setToken} from '../../utilize/'
 
 export default function Login() {
     const [showPwd, setShowPwd] = useState(false)
     const [errUser, setErrUser] = useState(false)
     const [errPass, setErrPass] = useState(false)
 
+    const [loginFailed,setLoginFailed]= useState(false);
+
     const [username,setUsername] = useState('')
     const [password,setPassword] = useState('')
 
+    const [serverError,setServerError] = useState('')
     const navigate = useNavigate()
 
-    const loginMethod = ()=>{
+    const loginMethod = async()=>{
         let ok = true;
         if(!username){
             setErrUser(true)
@@ -33,12 +38,33 @@ export default function Login() {
             setErrPass(false)
         }
 
-        if(ok){
-            navigate('/')
+        if(!ok){
+            return
         }
+
+        try{
+            const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+            const payload={
+                username:username.trim(),
+                password:password
+            };
+
+            const res= await axios.post(`${API_URL}/api/auth/login`,payload);
+
+            const {token} = res.data;
+
+            setToken('authToken',token)
+
+            navigate('/')
+        }catch (error: any) {
+            setLoginFailed(true)
+            // If backend sent a 4xx/5xx with { message: '...' }
+            const msg = error.response?.data?.message || 'Kindly double check your username or password';
+                setServerError(msg);
+            }
     }
     return (
-        <div>
+        <div className='relative'>
             <div className='flex h-screen overflow-hidden relative'>
                 <div className="flex-1 bg-black text-white relative overflow-hidden">
                     <div className="w-100 text-8xl font-bold transform origin-bottom-left rotate-90 -mt-10  ml-10">
@@ -93,6 +119,18 @@ export default function Login() {
                 <div className='absolute bottom-0 text-[150px] font-bold text-transparent [-webkit-text-stroke:3px_rgba(244,4,4,0.2)] overflow-hidden'>
                     MIKA PIKAZO
                 </div>
+                {
+                    loginFailed && (
+                        <div className='overflow-hidden w-screen h-screen absolute top-0 left-0 z-20 inset-0 background-overlay-black flex'>
+                            <div className='p-5 bg-[#f7f7f7] w-fit h-[20%] text-center m-auto items-center'>
+                                <div className='my-2 font-bold text-[2.5rem] text-[#080403]'>Login Failed</div>
+                                <div className='my-2'>Please try again later</div>
+                                <div className="cursor-pointer" onClick={()=>setLoginFailed(false)}>Close</div>
+                            </div>
+                        </div>
+                    )
+                }
+                
             </div>
         </div>
     )

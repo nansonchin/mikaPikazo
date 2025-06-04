@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import loginGirl from '../../assets/images/login_mika_pic.png';
 import passwordOpen from '../../assets/icons/password_open.png';
 import passwordClose from '../../assets/icons/password_close.png';
@@ -6,7 +7,7 @@ import circle_Arrow from '../../assets/icons/circle_arrow.png';
 import google from '../../assets/icons/twitterX.png';
 import twitterX from '../../assets/icons/google.png';
 import { Link, useNavigate } from 'react-router-dom';
-
+import {setToken} from '../../utilize';
 export default function Register() {
     const [showPwd, setShowPwd] = useState(false)
     const [showConfirm, setShowConfirm] = useState(false)
@@ -31,12 +32,16 @@ export default function Register() {
     const [successDigit, setSuccessDigit] = useState(false)
     const [counter,setCounter] = useState(3)
     const [resendCounter,setResendCounter] = useState(60)
+    const [serverError,setServerError]= useState('');
+    
     const navigate = useNavigate()
 
-    const registerMethod = ()=>{
+    const registerMethod = async()=>{
         let ok = true;
-        if(!username){
-            setErrUser(true)
+        setServerError('')
+
+        if(!username.trim()){
+            setErrUser(true);
             ok=false;
         }else{
             setErrUser(false)
@@ -44,26 +49,51 @@ export default function Register() {
 
         if(!password){
             setErrPass(true)
-            ok=false;
-        } else{
-            setErrPass(false)
+            ok = false;
+        }else{
+            setErrPass(false);
         }
-        if(!confirm){
-            setErrConfirm(true)
-            ok=false;
-        } else{
-            setErrPass(false)
-        }
-        if(!email){
-            setErrMail(true)
-            ok=false;
-        } else{
-            setErrPass(false)
-        }
-        
 
-        if(ok){
-            setShowDigit(true)
+        if(!confirm){
+            setErrConfirm(true);
+            ok=false;
+        }else{
+            setErrConfirm(false)
+        }
+
+        if(password && confirm && password !==confirm){
+            setErrConfirm(true);
+            ok=false;
+        }
+
+        if(!email.trim()){
+            setErrMail(true)
+            ok = false;
+        }else{
+            setErrMail(false)
+        }
+
+        if(!ok){
+            return;
+        }
+
+        try{   
+            const API_URL=import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000'
+            const payload={
+                username:username.trim(),
+                email:email.trim(),
+                password:password,
+                password2:confirm
+            }
+
+            const res= await axios.post(`${API_URL}/api/auth/register`,payload)
+
+            const {token}= res.data;
+            setToken('authToken',token)
+            navigate('/');
+        }catch(error:any){
+            const msg= error.repsonse?.data?.message || ' Registration Failed';
+            setServerError(msg)
         }
     }
 
@@ -78,7 +108,7 @@ export default function Register() {
     useEffect(()=>{
     let timer: number | undefined;
        if(successDigit){
-        timer = setInterval(()=>{
+        timer = window.setInterval(()=>{
             setCounter(c=>{
                 if(c<=1){
                     clearInterval(timer);
@@ -93,9 +123,9 @@ export default function Register() {
     },[successDigit,navigate])
 
     useEffect(()=>{
-        let resendTimer:number|undefined;
+        let resendTimer:number | undefined;
         if(resend){
-            resendTimer = setInterval(()=>{
+            resendTimer = window.setInterval(()=>{
                 setResendCounter(c=>{
                     if(c<=1){
                         clearInterval(resendTimer)

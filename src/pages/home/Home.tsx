@@ -92,76 +92,14 @@ export default function Home(){
                 setAboutData(aboutsData[0])
                 setShopData(shopData),
                 setExhibitionData(exhibitionDatas)
+                console.log('API /api/exhibition returned:', exhibitionDatas);
             }
+            
         ).catch(err=>{
             console.error(`Error Front End Using Api ${err}`)
         })
     },[])
    
-    const swiperArt=[
-        {
-            id:0,
-            img:Exart1
-        },
-        {
-            id:1,
-            img:Exart2
-        },
-        {
-            id:2,
-            img:Exart3
-        },
-        {
-            id:4,
-            img:Exart1
-        },
-        {
-            id:5,
-            img:Exart2
-        },
-        {
-            id:6,
-            img:Exart3
-        },
-    ]
-    const recommendProduct=[
-        {
-            images: [Slide1],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [Slide2],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-AB',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [Slide3],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-ABBB',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [product1],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-A123',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [product2],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-AB',
-            price: '¥  2,000(税込)',
-        },
-        {
-            images: [product3],
-            category: 'グッズ',
-            title: '「Mika Pikazo展」 クリアファイルセット Type-Z',
-            price: '¥  2,000(税込)',
-        },
-    ]
 
     const ExhibitionText=[
         {
