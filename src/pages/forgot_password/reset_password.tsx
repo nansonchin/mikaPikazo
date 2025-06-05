@@ -19,7 +19,7 @@ export default function ResetPassword() {
     useEffect(()=>{
         let timer: number | undefined;
        if(resetSuccess){
-        timer = setInterval(()=>{
+        timer = window.setInterval(()=>{
             setCounter(c=>{
                 if(c<=1){
                     clearInterval(timer);

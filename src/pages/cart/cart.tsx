@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import back_icon from '../../assets/icons/back_icon.png'
 import back_icon_black from '../../assets/icons/back_60_black.png'
 import CartComponents from '../../components/cart_component';
@@ -7,9 +7,25 @@ import side_jcb from '../../assets/icons/jcb_active.png';
 import side_master from '../../assets/icons/master.png';
 import side_visa from '../../assets/icons/visa.png';
 import side_paypay from '../../assets/icons/paypay.png';
+import Header from '../header/header';
+import axios from 'axios'
+import {getToken} from '../../utilize/index'
+import { Link, useNavigate } from 'react-router-dom';
+
+interface CartItem{
+    cart_id:number;
+    product_id:number;
+    quantity:number;
+    title:string;
+    price:number;
+    thumbnail:string;
+}
 export default function Cart() {
+    const [cartItem,setCartItem]=useState<CartItem[]>([])
     const [sideMenuOpen,setSideMenuOpen]=useState(false)
     const [paymentSelected,setPaymentSelected]=useState(0)
+    const [error,setError]= useState<string|null>(null)
+    const [loading,setLoading]= useState(true);
 
     const [isInputPayment,setIsInputPayment]=useState(true)
     const [cardNumber,setCardNumber]=useState('')
@@ -70,8 +86,109 @@ export default function Cart() {
 
         }
     }
+
+    const navigate = useNavigate()
+
+    useEffect(()=>{
+        const token=getToken('authToken')
+        if(!token){
+            navigate('/login')
+            return
+        }
+        const API_URL= import.meta.env.VITE_API_LOCALHOST ||  'http://localhost:4000';
+        axios.get<CartItem[]>(`${API_URL}/api/cart`,{
+            headers: { Authorization: `Bearer ${token}` }
+
+        }).then((res)=>{
+            setCartItem(res.data);
+        }).catch((err)=>{
+            console.error('Failed to fetch cart items',err);
+            if(err.response?.status === 401 || err.response?.status === 403){
+                navigate('/login')
+            }else{
+                setError('Error fetching cart data')
+            }
+        }).finally(()=>{
+            setLoading(false)
+        })
+
+    },[navigate])
+
+  const handleQuantityChange = (cartId: number, newQuantity: number) => {
+    // Example: call backend to update quantity
+    const token = getToken('authToken');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+    axios
+      .post(
+        `${API_URL}/api/cart/update`,
+        { cartId, quantity: newQuantity },
+        { headers: { Authorization: `Bearer ${token}` }}
+      )
+      .then(() => {
+        // On success, update local state:
+        setCartItem((prev) =>
+          prev.map((item) =>
+            item.cart_id === cartId
+              ? { ...item, quantity: newQuantity }
+              : item
+          )
+        );
+      })
+      .catch((err) => {
+        console.error('Failed to update quantity:', err);
+      });
+  };
+    const handleRemoveItem = (cartId: number) => {
+    const token = getToken('authToken');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+    axios
+      .post(
+        `${API_URL}/api/cart/remove`,
+        { cartId },
+        {headers: { Authorization: `Bearer ${token}` }}
+      )
+      .then(() => {
+        setCartItem((prev) =>
+          prev.filter((item) => item.cart_id !== cartId)
+        );
+      })
+      .catch((err) => {
+        console.error('Failed to remove cart item:', err);
+      });
+  };
+    const totalPrice= cartItem.reduce(
+        (sum,item)=>sum+item.price * item.quantity,0
+    )
+
+     if (loading) {
+        return (
+        <div className="min-h-screen flex items-center justify-center bg-[#080403]">
+            <p className="text-white">Loading cart…</p>
+        </div>
+        );
+    }
+
+    if (error) {
+        return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[#080403] text-white">
+            <p>{error}</p>
+            <Link to="/" className="mt-4 text-cyan-500 hover:underline">
+            ← Back to Home
+            </Link>
+        </div>
+        );
+    }
     return (
         <div>
+            <Header/>
             <div className='min-h-screen bg-[#080403] relative h-full'>
                 <div className='py-10'>
                     <div className='flex justify-between'>
@@ -87,14 +204,23 @@ export default function Cart() {
                         </div>
                         <div className='w-11/12 w-full'>
                             <div className='font-bold text-center text-[#f7f7f7] text-[2.5rem] py-8'>
-                                Cart (2)
+                                Cart ({cartItem.length})
                             </div>
                             <div className='py-10 px-10 flex relative'>
-                                <div className='w-8/12 mx-6'>
-                                    <div className=''>
-                                        <CartComponents />
+                                     <div className="py-10 px-10 flex relative">
+                                        {/* ─── Left: Cart Items List ────────────────────────── */}
+                                        <div className="w-full mx-6 border-2 ">
+                                        {cartItem.length === 0 ? (
+                                            <div className="text-[#f7f7f7]">Your cart is empty.</div>
+                                        ) : (
+                                            <CartComponents
+                                            items={cartItem}
+                                            onQuantityChange={handleQuantityChange}
+                                            onRemoveItem={handleRemoveItem}
+                                            />
+                                        )}
+                                        </div>
                                     </div>
-                                </div>
                                 <div className='w-4/12 sticky'>
                                     <div className='bg-[#F7F7F7] p-4'>
                                         <div className='flex justify-between items-center'>

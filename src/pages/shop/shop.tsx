@@ -5,6 +5,7 @@ import Shop_components from '../../components/shop_components';
 import Product_Image_1 from '../../assets/images/product-1.png';
 import Product_Image_2 from '../../assets/images/product-2.png';
 import Product_Image_3 from '../../assets/images/product-3.png';
+import Header from '../header/header';
 
 interface ShopItem{
     id:number;
@@ -97,6 +98,7 @@ export default function Shop() {
     },[])
     return (
         <div>
+            <Header/>
             <div className="w-screen relative overflow-x-hidden">
                 <div className="z-1 w-full h-150 bg-cover bg-center relative" style={{ backgroundImage: `url(${shopBackground})` }}>
                     <div className="pt-10 text-[#F7F7F7] px-10">

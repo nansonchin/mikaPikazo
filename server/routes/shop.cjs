@@ -25,15 +25,15 @@ router.get('/',async (req,res) => {
 router.get('/:id',async(req,res)=>{
     const {id}= req.params;
     try{
-        const {rows}= await pool.query('SELECT * FROM news where id= $1,'[id])
-        if(rows.length ===0){
+        const {rows}= await pool.query('SELECT * FROM shop where id= $1',[id])
+        if(rows.length === 0){
             return res.status(404).json({ error: 'Shop detail not found' })
         }
         res.json(rows[0])
     }catch(error){
-         console.error('Error getting shop detail:', error);
+        console.error('Error getting shop detail:', error);
         res.status(500).json({
-        error: 'Internal Server Error while fetching shop detail'
+            error: 'Internal Server Error while fetching shop detail'
         });
     }
 })

@@ -81,7 +81,7 @@ export default function Carousel({ products }: CarouselProps) {
                 </div>
                 <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center space-x-2'>
                     {pages.map((_, idx) => (
-                        <div key={idx} className='relative cursor-pointer' onClick={() => setCurrentPage(idx)}>
+                        <div key={idx+'idx'} className='relative cursor-pointer' onClick={() => setCurrentPage(idx)}>
                             {idx === currentPage ? (
                                 <div className="w-10 h-2 bg-gray-700 rounded full overflow-hidden">
                                     <div key={`progress-${currentPage}`} className='h-full bg-[#FFDC22]' style={{ width: '0%', animation: 'progress 3s linear forwards' }}>

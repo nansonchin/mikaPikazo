@@ -7,6 +7,7 @@ const newsRoutes=require('./routes/news.cjs')
 const shopRoutes=require('./routes/shop.cjs')
 const exhibitionRoutes=require('./routes/exhibition.cjs')
 const about=require('./routes/about.cjs')
+const cartRoutes=require('./routes/cart.cjs')
 
 const app = express();
 app.use(cors())
@@ -16,6 +17,7 @@ app.use('/api/news',newsRoutes)
 app.use('/api/shop',shopRoutes)
 app.use('/api/exhibition',exhibitionRoutes)
 app.use('/api/about',about)
+app.use('/api/cart',cartRoutes)
 
 const PORT = process.env.PORT || 4000;
 
