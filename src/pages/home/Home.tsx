@@ -20,7 +20,7 @@ import News_2 from '../../assets/images/homenews_2.png'
 import News_3 from '../../assets/images/homenews_3.png'
 import News_4 from '../../assets/images/homenews_4.png'
 import { Swiper as SwiperType } from 'swiper';
-import {Link} from 'react-router-dom';
+import {Link, useLocation} from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules'
 import SlideButton from '../../assets/icons/slide_button_40.png'
@@ -77,7 +77,7 @@ export default function Home(){
     const [aboutData,setAboutData] = useState<AboutData>();
     const [shopData,setShopData]=useState<ShopData[]>([]);
     const [exhibitionData, setExhibitionData]= useState<ExhibitionData[]>([]);
-
+    const location = useLocation();
     useEffect(()=>{
         const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
 
@@ -152,6 +152,15 @@ export default function Home(){
         </div>
         );
     }
+
+    useEffect(()=>{
+        if(location.hash){
+            const element =document.getElementById(location.hash.slice(1))
+            if(element){
+                element.scrollIntoView()
+            }
+        }
+    },[location])
     return (
         <div id="top" className='min-h-screen bg-[#080403] relative h-full'>
             <Header/>

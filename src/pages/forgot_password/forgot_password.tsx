@@ -39,6 +39,7 @@ export default function ForgotPassword() {
     }
     return (
         <div>
+            
             <div className='flex h-screen overflow-hidden relative'>
                 <div className="flex-1 bg-black text-white relative overflow-hidden">
                     <div className="w-100 text-8xl font-bold transform origin-bottom-left rotate-90 -mt-10  ml-10">

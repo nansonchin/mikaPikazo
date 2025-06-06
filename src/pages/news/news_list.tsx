@@ -4,6 +4,7 @@ import NewBg2 from '../../assets/images/news_2.jpg'
 import NewBg3 from '../../assets/images/news_3.jpg'
 import New_backIcon from '../../assets/icons/new_back.png'
 import { Link } from 'react-router-dom';
+import Header from '../header/header';
 export default function NewList(){
     const NewsData=[
         {
@@ -48,6 +49,7 @@ useEffect(()=>{
 
     return(
         <div>
+            <Header/>
             <div className='min-h-screen bg-[#080403] relative h-full'>
                 {/* news_bg */}
                 <div

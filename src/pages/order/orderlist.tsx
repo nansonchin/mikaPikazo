@@ -1,9 +1,11 @@
 import React from 'react';
 import back_icon from '../../assets/icons/back_icon.png'
 import OrderComponents from '../../components/order_components';
+import Header from '../header/header';
 export default function OrderList() {
     return (
         <div>
+            <Header/>
             <div className='min-h-screen bg-[#080403] relative h-full'>
                 <div className='py-10'>
                     <div className='flex justify-between'>

@@ -6,12 +6,13 @@ import header_contact from '../../assets/icons/header_contact.png'
 import header_profile from '../../assets/icons/header_profile.png'
 import { Link } from 'react-router-dom'
 import axios from 'axios';
-import { getToken } from '../../utilize/index' 
+import { getToken, clearToken } from '../../utilize/index' 
+import { HashLink } from "react-router-hash-link";
 
 export default function Header(){
     const [cartCount,setCartCount]= useState<number>(0)
     const [loadingCount,setLoadingCount] = useState(true)
-    
+    const [isToken,setIsToken] = useState(false)
     const headerIcon=[
         {
             id:0,
@@ -31,13 +32,9 @@ export default function Header(){
             nav:'/Contact',
             badge:0,
         },
-        {
-            id:3,
-            icon:header_profile,
-            nav:'/Login',
-            badge:0,
-        }
     ]
+
+
 
     useEffect(()=>{
         const token = getToken('authToken')
@@ -59,6 +56,12 @@ export default function Header(){
             setLoadingCount(false)
         })
     },[])
+    
+    const handleLogout = () => {
+        clearToken('authToken')
+        setIsToken(false)
+        // You might also navigate somewhere or reload…
+    }
 
     return(
         <div className='bg-[#080403] relative w-full'>
@@ -72,9 +75,9 @@ export default function Header(){
                     <div className='w-6/12 border-1 border-[#f7f7f7] flex justify-evenly py-4 px-2'>
                        {
                         ['home','news','art','shop','about'].map(section=>(
-                            <a key={section} href={`#${section}`} className='text-[#f7f7f7] text-lg cursor-pointer '>
+                            <HashLink key={section} to={`/#${section}`} className='text-[#f7f7f7] text-lg cursor-pointer '>
                                 {section.charAt(0).toUpperCase() + section.slice(1)}
-                            </a>
+                            </HashLink>
                         ))
                        }
                     </div>

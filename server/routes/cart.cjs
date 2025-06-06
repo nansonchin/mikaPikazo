@@ -11,21 +11,33 @@ router.post('/add',authMiddleware,async(req,res)=>{
     if(!productId){
         return res.status(400).json({message:'Product Id is required'})
     }
-     try {
-        // Make sure this matches your actual table name exactly:
-        const result = await pool.query(`
-        INSERT INTO cart_item (user_id, product_id, quantity)
-        VALUES ($1, $2, $3)
-        ON CONFLICT (user_id, product_id)
-        DO UPDATE SET quantity = cart_item.quantity + 1
-        `, [userId, productId, 1]);
+    try{
+        const updateResult= await pool.query(
+            `
+            UPDATE cart_item
+            SET quantity = quantity + 1
+            WHERE user_id = $1
+            AND product_id = $2
+            AND is_remove = 0 
+            RETURNING *
+            `,
+            [userId,productId]
+        )
+        if(updateResult.rowCount>0){
+            return res.json({success:'true',updated:updateResult.rows[0]})
+        }
 
-        // result.rows might be empty for an INSERT/UPDATE, but at least no error was thrown
-        return res.json({ success: true });
-    } catch (err) {
-        // Log the full error so you can see what went wrong:
-        console.error('Add to cart error (SQL):', err.stack || err);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        const insertResult = await pool.query(
+            `
+            INSERT INTO cart_item (user_id,product_id,quantity,is_remove)
+            VALUES ($1,$2,$3,$4)
+            RETURNING *
+            `,[userId,productId,1,0]
+        )
+        return res.json({success:true,inserted:insertResult.rows[0]})
+    }catch(err){
+        console.error(`Add to cart error:`, err.stack || err);
+        return res.status(500).json({message:'Internal Server Error'})
     }
 
 })
@@ -33,7 +45,7 @@ router.post('/add',authMiddleware,async(req,res)=>{
 router.get('/get',authMiddleware,async(req,res)=>{
     const userId=req.userId
     try{
-        const getQuery = await pool.query(`SELECT SUM(quantity) AS total FROM cart_item WHERE user_id=$1`, [userId])
+        const getQuery = await pool.query(`SELECT SUM(quantity) AS total FROM cart_item WHERE user_id=$1 AND is_remove = $2` , [userId,0])
         const count = getQuery.rows[0].total || 0;
         return res.json({count});
     }catch(error){
@@ -48,7 +60,8 @@ router.get('/count', authMiddleware, async (req, res) => {
         const { rows } = await pool.query(
         `SELECT COALESCE(SUM(quantity), 0) AS total
         FROM cart_item
-        WHERE user_id = $1`,
+        WHERE user_id = $1
+        AND is_remove = 0`,
         [userId]
         );
         const count = rows[0].total || 0;
@@ -71,10 +84,37 @@ router.post('/update',authMiddleware,async(req,res)=>{
     }
 
     try{
+        const {rows:existingRows}= await pool.query(
+            `
+                SELECT product_id,is_remove
+                FROM cart_item
+                WHERE id =$1
+                AND user_id =$2
+            `,[cartId,userId]
+        )
+
+        if(existingRows.length ===0){
+            return res.status(404).json({message:'Cart item not found'})
+        }
+        const {product_id:productId,is_remove}= existingRows[0]
+
+        if(is_remove ===1){
+            const insertNew = await pool.query(
+                `
+                INSERT INTO cart_item (user_id,product_id, quantity, is_remove)
+                VALUES ($1, $2,$3,0)
+                RETURNING *
+                `,
+                [userId,productId,quantity]
+            )
+            return res.json({success:true,inserted:insertNew.rows[0]})
+        }
+
+    
         const result = await pool.query(`
             UPDATE cart_item
             SET quantity = $1
-            WHERE id = $2 AND user_id = $3
+            WHERE id = $2 AND user_id = $3 AND is_remove=0
             RETURNING *
             
             `,[quantity,cartId,userId])
@@ -127,6 +167,8 @@ router.get('/',authMiddleware,async(req,res)=>{
             FROM cart_item as c
             JOIN shop s ON c.product_id=s.id
             WHERE c.user_id=$1
+            AND c.is_remove = 0
+            ORDER BY c.id ASC
             `,[userId]
         );
         return res.json(rows)

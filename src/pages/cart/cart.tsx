@@ -114,56 +114,46 @@ export default function Cart() {
 
     },[navigate])
 
-  const handleQuantityChange = (cartId: number, newQuantity: number) => {
-    // Example: call backend to update quantity
-    const token = getToken('authToken');
-    if (!token) {
-      navigate('/login');
-      return;
+    const handleQuantityChange=(cartId:number,newQuantity:number)=>{
+        const token = getToken('authToken')
+        if(!token){
+            navigate('/login')
+            return
+        }
+        const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+
+        setCartItem(prev=>
+            prev.map(item=>
+                item.cart_id === cartId ?
+                {...item, quantity:Math.max(1,newQuantity)}:
+                item
+            )
+        )
+
+        axios.post(`${API_URL}/api/cart/update`,
+            {cartId,quantity:Math.max(1,newQuantity)},
+            {headers:{Authorization:`Bearer ${token}`}}
+        ).catch(err=>{
+            console.error(`Failed to update quantity`,err)
+        })
+     
+    };
+
+    const handleRemoveItem=(cartId:number)=>{
+        const token = getToken('AuthToken')
+        if(!token){
+            navigate('/login')
+            return;
+        }
+        const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
+        setCartItem(prev=>prev.filter(item=>item.cart_id !== cartId))
+
+        axios.post(`${API_URL}/api/cart/remove`,{cartId},{headers:{Authorization:`Bearer ${token}`}}).
+        catch(err=>{
+            console.error(`Failed to remove cartItem `,err)
+        })
+
     }
-    const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
-    axios
-      .post(
-        `${API_URL}/api/cart/update`,
-        { cartId, quantity: newQuantity },
-        { headers: { Authorization: `Bearer ${token}` }}
-      )
-      .then(() => {
-        // On success, update local state:
-        setCartItem((prev) =>
-          prev.map((item) =>
-            item.cart_id === cartId
-              ? { ...item, quantity: newQuantity }
-              : item
-          )
-        );
-      })
-      .catch((err) => {
-        console.error('Failed to update quantity:', err);
-      });
-  };
-    const handleRemoveItem = (cartId: number) => {
-    const token = getToken('authToken');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-    const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000';
-    axios
-      .post(
-        `${API_URL}/api/cart/remove`,
-        { cartId },
-        {headers: { Authorization: `Bearer ${token}` }}
-      )
-      .then(() => {
-        setCartItem((prev) =>
-          prev.filter((item) => item.cart_id !== cartId)
-        );
-      })
-      .catch((err) => {
-        console.error('Failed to remove cart item:', err);
-      });
-  };
     const totalPrice= cartItem.reduce(
         (sum,item)=>sum+item.price * item.quantity,0
     )
@@ -206,12 +196,12 @@ export default function Cart() {
                             <div className='font-bold text-center text-[#f7f7f7] text-[2.5rem] py-8'>
                                 Cart ({cartItem.length})
                             </div>
-                            <div className='py-10 px-10 flex relative'>
-                                     <div className="py-10 px-10 flex relative">
+                            <div className='py-10 px-10 flex relative w-full'>
+                                     <div className="py-10 px-10 flex relative w-full">
                                         {/* ─── Left: Cart Items List ────────────────────────── */}
-                                        <div className="w-full mx-6 border-2 ">
+                                        <div className="w-full mx-6 w-full ">
                                         {cartItem.length === 0 ? (
-                                            <div className="text-[#f7f7f7]">Your cart is empty.</div>
+                                            <div className="text-[#f7f7f7] w-full">Your cart is empty.</div>
                                         ) : (
                                             <CartComponents
                                             items={cartItem}
@@ -258,7 +248,7 @@ export default function Cart() {
                                         </div>
                                         <div className='flex justify-between items-center my-8'>
                                             <div className='font-bold text-[#080403]'>まとめ</div>
-                                            <div className='font-bold text-[#080403]'>¥  5,600(税込)</div>
+                                            <div className='font-bold text-[#080403]'>¥  {totalPrice}(税込)</div>
                                         </div>
                                         <div className='border-b-4 border-[#FFDC22]'></div>
                                         <div className='bg-[#FFDC22] px-4 py-6 my-8 cursor-pointer'>

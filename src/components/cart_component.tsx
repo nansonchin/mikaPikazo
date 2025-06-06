@@ -51,7 +51,8 @@ export default function CartComponents({items,onQuantityChange,onRemoveItem}:Car
                             </div>
                             <div className='flex justify-between w-full'>
                                 <div className='flex items-center justify-center'>
-                                    <img src={minusIcon} className='object-contain w-10 cursor-pointer' onClick={()=>{item.cart_id, Math.max(1, item.quantity - 1)
+                                    <img src={minusIcon} className='object-contain w-10 cursor-pointer' onClick={()=>{
+                                        onQuantityChange(item.cart_id, Math.max(1, item.quantity - 1))
                                     }}/>
                                     <input type="text" value={item.quantity} readOnly className='w-auto h-11 bg-[#f7f7f7] text-center border border-[#080403] mx-2'></input>
                                     <img src={addIcon} className='object-contain w-10 cursor-pointer' onClick={()=>{

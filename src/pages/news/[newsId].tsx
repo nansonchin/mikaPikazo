@@ -8,6 +8,7 @@ import News_InstaIcon from '../../assets/icons/news_insta.png'
 import News_XIcon from '../../assets/icons/news_x.png'
 import NextIcon from '../../assets/icons/next_white_icon.png'
 import { Link,useNavigate,useParams } from 'react-router-dom'
+import Header from '../header/header'
 
 interface NewsItem{
     id:number,
@@ -109,6 +110,7 @@ export default function NewsDetail(){
    
     return(
         <div>
+            <Header/>
             <div className='min-h-screen bg-[#080403] relative h-full'>
                 {/* news_bg */}
                 <div

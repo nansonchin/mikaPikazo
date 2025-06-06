@@ -8,6 +8,7 @@ import google from '../../assets/icons/twitterX.png';
 import twitterX from '../../assets/icons/google.png';
 import { Link, useNavigate } from 'react-router-dom';
 import {setToken} from '../../utilize';
+import Header from '../header/header';
 export default function Register() {
     const [showPwd, setShowPwd] = useState(false)
     const [showConfirm, setShowConfirm] = useState(false)
@@ -150,6 +151,7 @@ export default function Register() {
     }
     return (
         <div>
+            <Header/>
             <div className='flex h-screen overflow-hidden relative'>
                 <div className="flex-1 bg-black text-white relative overflow-hidden">
                     <div className="w-100 text-8xl font-bold transform origin-bottom-left rotate-90 -mt-10  ml-10">

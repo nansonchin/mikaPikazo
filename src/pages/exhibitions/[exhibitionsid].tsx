@@ -10,6 +10,7 @@ import art7 from '../../assets/images/art7.png'
 import art8 from '../../assets/images/art8.png'
 import exihibitionArt from '../../assets/images/art_exhibitions.png'
 import { Link, useParams } from 'react-router-dom';
+import Header from '../header/header';
 
 interface ExhibitionDetail{
     id:number;
@@ -150,6 +151,7 @@ export default function ExhibitionDetail(){
         }
     return(
         <div>
+            <Header/>
             <div className='min-h-screen bg-[#080403] relative h-full'>
                 <div className='flex py-10'>
                     <div className='w-1/12 h-screen overflow-hidden bg-[#080403] grid 

@@ -18,6 +18,7 @@ import Art11 from '../../assets/art/art11.png'
 import Art12 from '../../assets/art/art12.png'
 import ExhibitionArtSlides from '../../components/exhibition_slide'
 import ExhibitionSlides from '../../components/exhibitions_home_slide';
+import Header from '../header/header';
 
 interface ExhibitionDetail{
   id:number;
@@ -205,6 +206,7 @@ export default function Exhibitions() {
     },[])
     return (
         <div>
+            <Header/>
             <div className='bg-[#080403] min-h-screen relative'>
                 <div className='px-5'>
                     <div className='flex justify-around'>
