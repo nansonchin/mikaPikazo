@@ -148,19 +148,11 @@ export default function Home(){
     if (homeNews.length === 0) {
         return (
         <div className="min-h-screen flex items-center justify-center bg-[#080403]">
-            <p className="text-white">Loading news…</p>
+            <p className="text-white">Loading </p>
         </div>
         );
     }
 
-    useEffect(()=>{
-        if(location.hash){
-            const element =document.getElementById(location.hash.slice(1))
-            if(element){
-                element.scrollIntoView()
-            }
-        }
-    },[location])
     return (
         <div id="top" className='min-h-screen bg-[#080403] relative h-full'>
             <Header/>

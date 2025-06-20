@@ -211,7 +211,7 @@ export default function NewsDetail(){
                                             >
                                             <Link to={`/News/${data.id}`}>
 
-                                                <div className='inset-0 z-10 absolute top-0 w-full h-full' 
+                                                <div className='inset-0 z-10 absolute top-0 w-full h-full ' 
                                                 style={{
                                                     backgroundImage: `
                                                         linear-gradient(
@@ -222,6 +222,7 @@ export default function NewsDetail(){
                                                     `,
                                                     backgroundRepeat: 'no-repeat',
                                                     backgroundSize: 'cover',
+                                                    backgroundPosition:'top'
                                                     }}
                                                     />
                                                     <div className='border-2 border-[#f7f7f7] p-4 w-full min-h-[16rem] h-full relative z-20 items-center text-center '>

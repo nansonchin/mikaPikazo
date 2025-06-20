@@ -33,6 +33,7 @@ export default function ExhibitionDetail(){
     const [loading,setLoading]=useState(true);
     const [getRandom,setGetRandom]=useState<ExhibitionDetail[]>([]);
     const [cutFourData,setCutFourData]=useState<ExhibitionDetail[]>([]);
+    const scrollContainerRef=useRef<HTMLDivElement>(null)
         const testImage=[
         {
             id:0,
@@ -98,31 +99,25 @@ export default function ExhibitionDetail(){
     },[activeIndex])
 
     useEffect(()=>{
+        const container =scrollContainerRef.current
+        if(!container) return
         const observer = new IntersectionObserver(
             (entries)=>{
                 entries.forEach((entry)=>{
-                    const index=itemRefs.current.findIndex((el)=>el===entry.target);
-                    if(entry.isIntersecting && index !== -1){
-                        setActiveIndex(index)
+                    if(entry.isIntersecting){
+                        const idx=itemRefs.current.findIndex(el=>el === entry.target)
+                        if(idx !==-1)setActiveIndex(idx)
                     }
                 });
             },
             {
-                root:null,
+                root:container,
                 threshold:0.6,
             }
         );
-        itemRefs.current.forEach((el)=>{
-            if(el)observer.observe(el);
-        })
+        itemRefs.current.forEach(el => el && observer.observe(el))
 
-        return()=>{
-            itemRefs.current.forEach((el)=>{
-                if(el){
-                    observer.unobserve(el);
-                }
-            })
-        }
+        return()=>observer.disconnect()
     },[])
 
     if (loading) {
@@ -183,11 +178,11 @@ export default function ExhibitionDetail(){
                         </div>
                     </div>
                     <div className='w-6/12 h-full bg-[#080403]'>
-                        <div className='space-y-4 p-6'>
+                        <div className='space-y-4 p-6' ref={scrollContainerRef}>
                             {
                                 getExhibitionData.image_details.map((art,idx)=>(
                                     <img 
-                                    key={getExhibitionData.id}
+                                    key={idx}
                                     ref={el => {itemRefs.current[idx] = el}} 
                                     src={art} className='object-cover max-w-full w-full'/>
 
@@ -195,10 +190,10 @@ export default function ExhibitionDetail(){
                             }
                         </div>
                     </div>
-                    <div className='w-5/12 relative h-full'>
-                        <div className='fixed overflow-y-auto h-full hide-scrollbar'>
-                            <div className='bg-white'>
-                                <div className='bg-[#f7f7f7] p-10'>
+                    <div className='w-5/12 relative h-full '> 
+                        <div className='fixed overflow-y-scroll h-full hide-scrollbar h-full'>
+                            <div className='bg-white pb-25'>
+                                <div className='bg-[#f7f7f7] p-10 h-full'>
                                     <div className='relative'>
                                         <div className="absolute -top-5 -left-5 w-20 h-2 bg-yellow-400"></div>
                                         <div className="absolute -top-5 -left-5 w-2 h-20 bg-yellow-400"></div>
@@ -233,18 +228,18 @@ export default function ExhibitionDetail(){
                                             {getExhibitionData?.date.toString()}
                                         </div>
                                     </div>
-                                    <div className='relative flex my-10 items-center'>
+                                    <div className='relative flex my-10 items-center '>
                                         <div className='w-[3rem] h-[3rem]'>
                                             <img src={mikaIcon} className='object-contain'/>
                                         </div>
                                         <div className='font-bold text-lg text-[#080403] pl-4'>Mika Pikazo</div>
                                     </div>
-                                    <div className='relative'>
-                                        <div className='absolute w-full'>
-                                            <div className='grid grid-cols-2 gap-2 '>
+                                    <div className=''>
+                                        <div className=' w-full h-full'>
+                                            <div className='grid grid-cols-2 gap-2'>
                                                 {   
                                                     cutFourData.map((data)=>(
-                                                        <div className='w-[100%] h-[20rem] border-2'>
+                                                        <div className='w-[100%] h-[20rem] border-2' key={data.id}>
                                                             <Link to={`/Art/${data.id}`}>
                                                                 <img src={data.image_details[0]} className='w-full h-full object-cover object-top cursor-pointer hover:scale-105 transition transition-transform duration-300'/>
                                                             </Link>

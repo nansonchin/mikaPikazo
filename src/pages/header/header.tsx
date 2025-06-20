@@ -4,7 +4,8 @@ import header_cart from '../../assets/icons/header_cart.png'
 import header_ship from '../../assets/icons/header_ship.png'
 import header_contact from '../../assets/icons/header_contact.png'
 import header_profile from '../../assets/icons/header_profile.png'
-import { Link } from 'react-router-dom'
+import header_logout from '../../assets/icons/log_out.png'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios';
 import { getToken, clearToken } from '../../utilize/index' 
 import { HashLink } from "react-router-hash-link";
@@ -13,6 +14,8 @@ export default function Header(){
     const [cartCount,setCartCount]= useState<number>(0)
     const [loadingCount,setLoadingCount] = useState(true)
     const [isToken,setIsToken] = useState(false)
+    const [isLoggedIn,setIsLoggedIn]= useState(false)
+    const navigate = useNavigate()
     const headerIcon=[
         {
             id:0,
@@ -38,28 +41,33 @@ export default function Header(){
 
     useEffect(()=>{
         const token = getToken('authToken')
-        if(!token){
-            setCartCount(0)
-            setLoadingCount(false)
-            return
-        }
+        if(token){
+            setIsLoggedIn(true)
+            const API_URL = import.meta.env.VITE_API_LOCALHOST || 'http://localhost:4000'
+            axios.get(`${API_URL}/api/cart/count`,{
+                headers:{Authorization:`Bearer ${token}`},
+            }).then((res)=>{
+                setCartCount(res.data.count ||0)
+            }).catch((err)=>{
+                console.error('Failed to fetch cart count ', err)
+                setCartCount(0)
+            }).finally(()=>{
+                setLoadingCount(false)
+            })
 
-        const API_URL =  import.meta.env.VIET_API_LOCALHOST || 'http://localhost:4000';
-        axios.get(`${API_URL}/api/cart/count`,{
-            headers:{Authorization:`Bearer ${token}`},
-        }).then((res)=>{
-            setCartCount(res.data.count ||0)
-        }).catch((err)=>{
-            console.error('Failed to fetch cart count ', err)
+        }else{
+            setIsLoggedIn(false)
             setCartCount(0)
-        }).finally(()=>{
             setLoadingCount(false)
-        })
+        }
+    
     },[])
     
     const handleLogout = () => {
         clearToken('authToken')
+        setIsLoggedIn(false)
         setIsToken(false)
+        navigate('/Login')
         // You might also navigate somewhere or reload…
     }
 
@@ -83,6 +91,9 @@ export default function Header(){
                     </div>
                     <div className='w-3/12'>
                         <div className='flex justify-evenly relative'>
+                            <div>
+                                
+                            </div>
                             {
                             headerIcon.map((icon)=>(
                                 <div className=' relative'>
@@ -98,6 +109,17 @@ export default function Header(){
                                     }
                                 </div>
                                 ))
+                            }
+                            {
+                                isLoggedIn ? (
+                                    <div onClick={handleLogout}>
+                                        <img src={header_logout} className='object-contain w-auto h-auto cursor-pointer '/>
+                                    </div>
+                                ):(
+                                    <Link to={`/Login`}>
+                                        <img src={header_profile} className='object-contain w-auto h-auto cursor-pointer '/>
+                                    </Link>
+                                )
                             }
                         </div>
                        
